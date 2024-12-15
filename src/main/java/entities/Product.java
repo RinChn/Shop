@@ -1,16 +1,31 @@
 package entities;
 
-import java.util.ArrayList;
-import java.sql.Timestamp;
 import jakarta.persistence.*;
 
+import java.sql.Timestamp;
+import java.util.UUID;
+
+@Entity
+@Table(name = "product")
 public class Product {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+            @Column(name = "id", nullable = false)
+    UUID id;
+    @Column(name = "name", nullable = false, length = 255)
     String name;
+    @Column(name = "description")
     String description;
-    String categories;
+    @Column(name = "categories")
+    Category categories;
+    @Column(name = "price", nullable = false)
     float price;
-    int quantity;
+    @Column(name = "quantity")
+    int quantity = 0;
+    @Column(name = "article_number", nullable = false)
     long articleNumber;
-    Timestamp dateOfLastChangesQuantity;
-    Timestamp dateOfCreation;
+    @Column(name = "date_last_changes_quantity")
+    Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
+    @Column(name = "date_creation")
+    Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
 }

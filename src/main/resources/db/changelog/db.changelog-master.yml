@@ -1,4 +1,3 @@
 databaseChangeLog:
   - include:
-      # schema
       file: db/changelog/sqlSchema.sql
