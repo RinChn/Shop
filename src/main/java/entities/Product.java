@@ -1,6 +1,8 @@
 package entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,6 +12,8 @@ import java.util.UUID;
 @Entity
 @Table(name = "product")
 @Getter
+@Builder
+@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -37,4 +41,8 @@ public class Product {
     Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
     @Column(name = "date_creation")
     final Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
+
+    public Product() {
+
+    }
 }
