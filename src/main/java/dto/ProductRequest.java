@@ -10,11 +10,11 @@ import java.util.UUID;
 @Builder
 @AllArgsConstructor
 public class ProductRequest {
-    String name;
-    String description;
-    Category categories;
-    Float price;
-    Integer quantity = 0;
-    Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
-    Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
+    private String name;
+    private String description;
+    private Category categories;
+    private Float price;
+    private Integer quantity = 0;
+    private Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
+    private Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
 }

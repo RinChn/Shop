@@ -21,9 +21,9 @@ public class Product {
     @Column(name = "price", nullable = false)
     Float price;
     @Column(name = "quantity")
-    Integer quantity = 0;
+    Integer quantity;
     @Column(name = "date_last_changes_quantity")
-    Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
+    Timestamp dateOfLastChangesQuantity;
     @Column(name = "date_creation")
-    final Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
+    Timestamp dateOfCreation;
 }
