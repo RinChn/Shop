@@ -1,12 +1,18 @@
 package entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
 
 import java.sql.Timestamp;
 import java.util.UUID;
 
 @Entity
 @Table(name = "product")
+@Getter
+@Builder
+@AllArgsConstructor
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,7 +29,11 @@ public class Product {
     @Column(name = "quantity")
     Integer quantity;
     @Column(name = "date_last_changes_quantity")
-    Timestamp dateOfLastChangesQuantity;
+    Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
     @Column(name = "date_creation")
-    Timestamp dateOfCreation;
+    Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
+
+    public Product() {
+
+    }
 }
