@@ -1,6 +1,6 @@
-package dto;
+package app.dto;
 
-import entities.Category;
+import app.entities.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
