@@ -4,6 +4,7 @@ import app.dto.ProductRequest;
 import app.dto.ProductResponse;
 import app.entities.Category;
 import app.entities.Product;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class ProductService {
 
     private final ConversionService conversionService;
@@ -40,8 +42,10 @@ public class ProductService {
                 && checkCategory(productDto.getCategories())
                 && !productDto.getPrice().isNaN()) {
             productRepository.save(conversionService.convert(productDto, Product.class));
+            log.info("Created product {}", productDto);
             return "Product created successfully";
         } else {
+            log.error("Invalid product request {}", productDto);
             return "Product creation failed";
         }
     }
@@ -56,8 +60,10 @@ public class ProductService {
     public String deleteProduct(String productUUID) {
         try {
             productRepository.deleteById(UUID.fromString(productUUID));
+            log.info("Deleted product {}", productUUID);
             return "Product deleted successfully";
         } catch (Exception e) {
+            log.error("Error while deleting product {}", productUUID, e);
             return "Product not found";
         }
     }
@@ -67,11 +73,13 @@ public class ProductService {
         try {
             entity = productRepository.findById(UUID.fromString(productUUID)).get();
         } catch (Exception e) {
+            log.error("Error while updating product {}", productUUID, e);
             return "Product not found";
         }
         entity.setName(newName);
         entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
         productRepository.save(entity);
+        log.info("Updated product {}", entity);
         return "Product updated successfully.";
     }
 
