@@ -3,7 +3,7 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>dmy</DateStyle>
-      <IntrospectionStateNumber>822</IntrospectionStateNumber>
+      <IntrospectionStateNumber>844</IntrospectionStateNumber>
       <ServerVersion>17.2</ServerVersion>
       <StartupTime>1734113434</StartupTime>
       <TimeZones>true ACDT
@@ -805,7 +805,7 @@ false Zulu
 14704||10|C|G
 14704||-9223372036854775808|U|G
 14704||10|U|G</Grants>
-      <IntrospectionStateNumber>822</IntrospectionStateNumber>
+      <IntrospectionStateNumber>844</IntrospectionStateNumber>
       <ObjectId>16389</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4236,8 +4236,8 @@ false Zulu
     <schema id="266" parent="3" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>822</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2024-12-21.19:35:32</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>844</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2024-12-22.13:57:20</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>532</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
@@ -4255,8 +4255,8 @@ false Zulu
       <OwnerName>postgres</OwnerName>
     </table>
     <table id="269" parent="266" name="product">
-      <ObjectId>16480</ObjectId>
-      <StateNumber>819</StateNumber>
+      <ObjectId>16491</ObjectId>
+      <StateNumber>834</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -4392,76 +4392,76 @@ false Zulu
       <StateNumber>795</StateNumber>
       <UnderlyingIndexId>16455</UnderlyingIndexId>
     </key>
-    <column id="290" parent="269" name="articlenumber">
+    <column id="290" parent="269" name="article_number">
       <DefaultExpression>gen_random_uuid()</DefaultExpression>
       <NotNull>1</NotNull>
       <Position>1</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>uuid|0s</StoredType>
       <TypeId>2950</TypeId>
     </column>
     <column id="291" parent="269" name="name">
       <NotNull>1</NotNull>
       <Position>2</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="292" parent="269" name="description">
       <Position>3</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>text|0s</StoredType>
       <TypeId>25</TypeId>
     </column>
     <column id="293" parent="269" name="categories">
       <Position>4</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>varchar(255)|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
     <column id="294" parent="269" name="price">
       <NotNull>1</NotNull>
       <Position>5</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>double precision|0s</StoredType>
       <TypeId>701</TypeId>
     </column>
     <column id="295" parent="269" name="quantity">
       <DefaultExpression>0</DefaultExpression>
       <Position>6</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
     <column id="296" parent="269" name="date_last_changes_quantity">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>7</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>timestamp|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
     <column id="297" parent="269" name="date_creation">
       <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
       <Position>8</Position>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <StoredType>timestamp|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
     <index id="298" parent="269" name="product_pkey">
-      <ColNames>articlenumber</ColNames>
+      <ColNames>article_number</ColNames>
       <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16489</ObjectId>
+      <ObjectId>16500</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>819</StateNumber>
+      <StateNumber>834</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
     <key id="299" parent="269" name="product_pkey">
       <NameSurrogate>1</NameSurrogate>
-      <ObjectId>16490</ObjectId>
+      <ObjectId>16501</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>819</StateNumber>
-      <UnderlyingIndexId>16489</UnderlyingIndexId>
+      <StateNumber>834</StateNumber>
+      <UnderlyingIndexId>16500</UnderlyingIndexId>
     </key>
   </database-model>
 </dataSource>
