@@ -1,8 +1,7 @@
-package entities;
+package entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.stereotype.Component;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -17,8 +16,10 @@ import java.util.UUID;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-            @Column(name = "article_number", nullable = false)
-    UUID articleNumber;
+            @Column(name = "id", nullable = false)
+    UUID id;
+    @Column(name = "article", nullable = false, unique = true)
+    Integer article;
     @Column(name = "name", nullable = false, length = 255)
     String name;
     @Column(name = "description")
