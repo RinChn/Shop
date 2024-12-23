@@ -3,7 +3,7 @@ package dto;
 import entity.Category;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.math.BigDecimal;
 
 @Setter
 @Getter
@@ -14,5 +14,7 @@ public class ProductRequest {
     private String description;
     private String categories;
     private Float price;
+    private Category categories;
+    private BigDecimal price;
     private Integer quantity;
 }
