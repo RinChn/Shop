@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Getter
@@ -15,7 +16,7 @@ public class ProductResponse {
     private String name;
     private String description;
     private Category categories;
-    private Float price;
+    private BigDecimal price;
     private Integer quantity;
     private Timestamp dateOfLastChangesQuantity;
     private Timestamp dateOfCreation;
