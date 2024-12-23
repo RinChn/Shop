@@ -1,5 +1,6 @@
 package dto;
 
+import entity.Category;
 import lombok.*;
 
 import java.sql.Timestamp;
@@ -9,12 +10,9 @@ import java.sql.Timestamp;
 @Builder
 @AllArgsConstructor
 public class ProductRequest {
-    private Integer article;
     private String name;
     private String description;
     private String categories;
     private Float price;
     private Integer quantity;
-    private Timestamp dateOfLastChangesQuantity;
-    private Timestamp dateOfCreation;
 }
