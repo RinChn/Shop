@@ -2,8 +2,8 @@ package service;
 
 import dto.ProductRequest;
 import dto.ProductResponse;
-import entities.Category;
-import entities.Product;
+import entity.Category;
+import entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
