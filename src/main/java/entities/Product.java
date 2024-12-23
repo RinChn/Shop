@@ -14,7 +14,6 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Component
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
