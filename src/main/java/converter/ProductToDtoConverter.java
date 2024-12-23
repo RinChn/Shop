@@ -1,4 +1,4 @@
-package service;
+package converter;
 
 import dto.ProductResponse;
 import entities.Product;

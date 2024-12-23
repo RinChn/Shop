@@ -1,4 +1,4 @@
-package service;
+package converter;
 
 import dto.ProductRequest;
 import entities.Category;
