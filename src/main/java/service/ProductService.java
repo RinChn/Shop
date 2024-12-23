@@ -1,14 +1,14 @@
-package app.service;
+package service;
 
-import app.dto.ProductRequest;
-import app.dto.ProductResponse;
-import app.entities.Category;
-import app.entities.Product;
+import dto.ProductRequest;
+import dto.ProductResponse;
+import entities.Category;
+import entities.Product;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
-import app.repository.ProductRepository;
+import repository.ProductRepository;
 
 import java.sql.Timestamp;
 import java.util.List;

@@ -1,11 +1,11 @@
-package app.controller;
+package controller;
 
-import app.dto.ProductRequest;
-import app.dto.ProductResponse;
+import dto.ProductRequest;
+import dto.ProductResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import app.service.ProductService;
+import service.ProductService;
 
 import java.util.List;
 

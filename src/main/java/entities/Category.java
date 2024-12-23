@@ -1,4 +1,4 @@
-package app.entities;
+package entities;
 
 public enum Category {
     CAT_A,

@@ -1,8 +1,8 @@
-package app.service;
+package service;
 
-import app.dto.ProductRequest;
-import app.entities.Category;
-import app.entities.Product;
+import dto.ProductRequest;
+import entities.Category;
+import entities.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
