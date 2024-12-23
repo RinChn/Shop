@@ -5,7 +5,7 @@ import dto.ProductResponse;
 import entity.Category;
 import entity.Product;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import repository.ProductRepository;
@@ -17,16 +17,11 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ProductService {
 
     private final ConversionService conversionService;
     private final ProductRepository productRepository;
-
-    @Autowired
-    public ProductService(ConversionService conversionService, ProductRepository productRepository) {
-        this.conversionService = conversionService;
-        this.productRepository = productRepository;
-    }
 
     private boolean checkCategory(String checkingField) {
         try {
@@ -37,16 +32,17 @@ public class ProductService {
         }
     }
 
-    public String createProduct(ProductRequest productDto) {
+    public ProductResponse createProduct(ProductRequest productDto) {
         if (!productDto.getName().isEmpty()
-                && checkCategory(productDto.getCategories())
+                && checkCategory(productDto.getCategories().toString())
                 && !productDto.getPrice().isNaN()) {
-            productRepository.save(conversionService.convert(productDto, Product.class));
+            Product product = conversionService.convert(productDto, Product.class);
+            productRepository.save(product);
             log.info("Created product {}", productDto);
-            return "Product created successfully";
+            return conversionService.convert(product, ProductResponse.class);
         } else {
             log.error("Invalid product request {}", productDto);
-            return "Product creation failed";
+            return null;
         }
     }
 
@@ -57,30 +53,32 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public String deleteProduct(String productUUID) {
+    public void deleteProduct(String productArticle) {
         try {
-            productRepository.deleteById(UUID.fromString(productUUID));
-            log.info("Deleted product {}", productUUID);
-            return "Product deleted successfully";
+            productRepository.deleteById(UUID.fromString(productArticle));
+            log.info("Deleted product {}", productArticle);
         } catch (Exception e) {
-            log.error("Error while deleting product {}", productUUID, e);
-            return "Product not found";
+            log.error("Error while deleting product {}", productArticle, e);
         }
     }
 
-    public String updateName(String productUUID, String newName) {
-        Product entity;
+    public ProductResponse update(ProductRequest productDto, String productArticle) {
+        Product entity = null;
         try {
-            entity = productRepository.findById(UUID.fromString(productUUID)).get();
+            entity = productRepository.findByArticle(productArticle);
         } catch (Exception e) {
-            log.error("Error while updating product {}", productUUID, e);
-            return "Product not found";
+            log.error("Error while updating product {}", productArticle, e);
+            return null;
         }
-        entity.setName(newName);
+        if (!productDto.getName().isEmpty()) entity.setName(productDto.getName());
+        if (!productDto.getDescription().isEmpty()) entity.setDescription(productDto.getDescription());
+        if (!productDto.getPrice().isNaN()) entity.setPrice(productDto.getPrice());
+        if (productDto.getCategories() != null) entity.setCategories(productDto.getCategories());
+        if (productDto.getQuantity() != null) entity.setQuantity(productDto.getQuantity());
         entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
         productRepository.save(entity);
         log.info("Updated product {}", entity);
-        return "Product updated successfully.";
+        return conversionService.convert(entity, ProductResponse.class);
     }
 
 }

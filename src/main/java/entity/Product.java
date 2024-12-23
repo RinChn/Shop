@@ -3,6 +3,7 @@ package entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public class Product {
     @Column(name = "categories")
     Category categories;
     @Column(name = "price", nullable = false)
-    Float price;
+    BigDecimal price;
     @Column(name = "quantity", columnDefinition = "integer default 0")
     Integer quantity;
     @Column(name = "date_last_changes_quantity", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
