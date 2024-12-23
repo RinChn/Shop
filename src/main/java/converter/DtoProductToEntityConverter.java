@@ -11,14 +11,11 @@ public class DtoProductToEntityConverter implements Converter<ProductRequest, Pr
     @Override
     public Product convert(ProductRequest source) {
         return Product.builder()
-                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .quantity(source.getQuantity())
                 .price(source.getPrice())
                 .categories(Category.valueOf(source.getCategories()))
-                .dateOfLastChangesQuantity(source.getDateOfLastChangesQuantity())
-                .dateOfCreation(source.getDateOfCreation())
                 .build();
 
     }
