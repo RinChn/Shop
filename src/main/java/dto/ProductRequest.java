@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 @Builder
 @AllArgsConstructor
 public class ProductRequest {
+    private Integer article;
     private String name;
     private String description;
     private String categories;

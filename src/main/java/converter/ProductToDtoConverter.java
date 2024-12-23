@@ -1,7 +1,7 @@
 package converter;
 
 import dto.ProductResponse;
-import entities.Product;
+import entity.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +18,7 @@ public class ProductToDtoConverter implements Converter<Product, ProductResponse
                 .quantity(source.getQuantity())
                 .dateOfLastChangesQuantity(source.getDateOfLastChangesQuantity())
                 .dateOfCreation(source.getDateOfCreation())
-                .articleNumber(source.getArticleNumber())
+                .article(source.getArticle())
                 .build();
     }
 }

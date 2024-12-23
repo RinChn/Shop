@@ -1,9 +1,10 @@
 --liquibase formatted sql
---changeset morik:4
+--changeset morik:1
 
 CREATE TABLE product
 (
-    article_number UUID NOT NULL default gen_random_uuid(),
+    id UUID NOT NULL default gen_random_uuid(),
+    article INTEGER NOT NULL UNIQUE,
     name VARCHAR(255) NOT NULL,
     description TEXT,
     categories VARCHAR(255),

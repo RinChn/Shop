@@ -1,18 +1,17 @@
 package dto;
 
-import entities.Category;
+import entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.sql.Timestamp;
-import java.util.UUID;
 
 @Getter
 @Builder
 @AllArgsConstructor
 public class ProductResponse {
-    private UUID articleNumber;
+    private Integer article;
     private String name;
     private String description;
     private Category categories;
