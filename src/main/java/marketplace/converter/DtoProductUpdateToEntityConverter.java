@@ -1,21 +1,20 @@
-package converter;
+package marketplace.converter;
 
-import dto.ProductRequest;
-import entity.Category;
-import entity.Product;
+import marketplace.dto.ProductRequestUpdate;
+import marketplace.entity.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class DtoProductToEntityConverter implements Converter<ProductRequest, Product> {
+public class DtoProductUpdateToEntityConverter implements Converter<ProductRequestUpdate, Product> {
     @Override
-    public Product convert(ProductRequest source) {
+    public Product convert(ProductRequestUpdate source) {
         return Product.builder()
                 .name(source.getName())
                 .description(source.getDescription())
                 .quantity(source.getQuantity())
                 .price(source.getPrice())
-                .categories(Category.valueOf(source.getCategories()))
+                .categories(source.getCategories())
                 .build();
 
     }

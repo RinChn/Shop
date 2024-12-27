@@ -1,6 +1,6 @@
-package dto;
+package marketplace.dto;
 
-import entity.Category;
+import marketplace.entity.Category;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -9,10 +9,10 @@ import java.math.BigDecimal;
 @Getter
 @Builder
 @AllArgsConstructor
-public class ProductRequest {
+public class ProductRequestUpdate {
     private String name;
     private String description;
-    private String categories;
+    private Category categories;
     private BigDecimal price;
     private Integer quantity;
 }
