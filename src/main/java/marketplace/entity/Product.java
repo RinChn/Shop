@@ -1,7 +1,8 @@
-package entity;
+package marketplace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ValueGenerationType;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -17,7 +18,7 @@ import java.util.UUID;
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-            @Column(name = "id", nullable = false)
+    @Column(name = "id", nullable = false)
     UUID id;
     @Column(name = "article", nullable = false, unique = true)
     Integer article;
@@ -26,6 +27,7 @@ public class Product {
     @Column(name = "description")
     String description;
     @Column(name = "categories")
+    @Enumerated(EnumType.STRING)
     Category categories;
     @Column(name = "price", nullable = false)
     BigDecimal price;
@@ -38,6 +40,9 @@ public class Product {
 
     @PrePersist
     public void prePersist() {
+        String intFromUuid = id.toString().replaceAll("[^0-9]", "");
+        intFromUuid = intFromUuid.substring(0, Math.min(9, intFromUuid.length()));
+        article = Integer.parseInt(intFromUuid);
         if (this.quantity == null) {
             this.quantity = 0;
         }
