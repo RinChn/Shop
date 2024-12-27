@@ -1,6 +1,6 @@
-package dto;
+package marketplace.dto;
 
-import entity.Category;
+import marketplace.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
