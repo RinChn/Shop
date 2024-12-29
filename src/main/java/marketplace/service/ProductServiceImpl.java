@@ -39,7 +39,7 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAll()
                 .stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
