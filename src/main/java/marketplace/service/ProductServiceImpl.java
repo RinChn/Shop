@@ -6,6 +6,7 @@ import marketplace.dto.ProductResponse;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import marketplace.exceptions.NonexistentProductArticleException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
@@ -29,7 +30,7 @@ public class ProductServiceImpl implements ProductService {
         Product product = conversionService.convert(productDto, Product.class);
         Product resultCheckingProduct = productRepository.findByNameAndDescriptionAndCategories(product.getName(),
                 product.getDescription(),
-                product.getCategories());
+                product.getCategories()).orElse(null);
         if (resultCheckingProduct == null) {
             productRepository.save(product);
             log.info("Created product {}", productDto);
@@ -53,40 +54,38 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional(readOnly = true)
     public ProductResponse getProduct(Integer productArticle) {
-        Product resultSearch = productRepository.findByArticle(productArticle);
+        Product resultSearch = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));
         return conversionService.convert(resultSearch, ProductResponse.class);
     }
 
     @Override
     @Transactional
     public void deleteProduct(Integer productArticle) {
-        try {
-            productRepository.delete(productRepository.findByArticle(productArticle));
-            log.info("Deleted product {}", productArticle);
-        } catch (Exception e) {
-            log.error("Error while deleting product {}", productArticle, e);
-        }
+        Product product = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));;
+        productRepository.delete(product);
+        log.info("Deleted product {}", productArticle);
     }
 
     @Override
     @Transactional
-    public ProductResponse updateProduct(ProductRequestUpdate productDto, Integer productArticle) {
+    public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
         Product entity;
-        try {
-            entity = productRepository.findByArticle(productArticle);
-        } catch (Exception e) {
-            log.error("Error while updating product {}", productArticle, e);
-            return null;
-        }
-        Optional.ofNullable(productDto.getName())
+        entity = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));
+        Optional.ofNullable(request.getName())
                 .ifPresent(entity::setName);
-        Optional.ofNullable(productDto.getDescription())
+        Optional.ofNullable(request.getDescription())
                 .ifPresent(entity::setDescription);
-        Optional.ofNullable(productDto.getPrice())
+        Optional.ofNullable(request.getPrice())
                 .ifPresent(entity::setPrice);
-        Optional.ofNullable(productDto.getCategories())
+        Optional.ofNullable(request.getCategories())
                 .ifPresent(entity::setCategories);
-        Optional.ofNullable(productDto.getQuantity())
+        Optional.ofNullable(request.getQuantity())
                 .ifPresent(entity::setQuantity);
 
         entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
