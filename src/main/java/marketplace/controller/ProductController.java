@@ -1,5 +1,6 @@
 package marketplace.controller;
 
+import jakarta.validation.Valid;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductResponse;
@@ -19,7 +20,7 @@ public class ProductController {
     private final ProductServiceImpl productService;
 
     @PostMapping("")
-    public ProductResponse addProduct(@RequestBody ProductRequestCreate request) {
+    public ProductResponse addProduct(@Valid @RequestBody ProductRequestCreate request) {
         log.info("Product creation request from the customer {}", request);
         return productService.createProduct(request);
     }
@@ -43,7 +44,7 @@ public class ProductController {
     }
 
     @PutMapping("/{article}")
-    public ProductResponse updateProduct(@RequestBody ProductRequestUpdate request,
+    public ProductResponse updateProduct(@Valid @RequestBody ProductRequestUpdate request,
                                 @PathVariable Integer article) {
         log.info("Updating product {} from the customer", article);
         return productService.updateProduct(request, article);
