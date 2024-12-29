@@ -19,9 +19,9 @@ public class ProductController {
     private final ProductService productService;
 
     @PostMapping("")
-    public ProductResponse addProduct(@RequestBody ProductRequestCreate productDto) {
-        log.info("Product creation request from the customer {}", productDto);
-        return productService.createProduct(productDto);
+    public ProductResponse addProduct(@RequestBody ProductRequestCreate request) {
+        log.info("Product creation request from the customer {}", request);
+        return productService.createProduct(request);
     }
 
     @GetMapping("")
@@ -43,10 +43,10 @@ public class ProductController {
     }
 
     @PutMapping("/{article}")
-    public ProductResponse updateProduct(@RequestBody ProductRequestUpdate productDto,
+    public ProductResponse updateProduct(@RequestBody ProductRequestUpdate request,
                                 @PathVariable Integer article) {
         log.info("Updating product {} from the customer", article);
-        return productService.updateProduct(productDto, article);
+        return productService.updateProduct(request, article);
     }
 
 }
