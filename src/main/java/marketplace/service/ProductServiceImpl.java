@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -28,9 +27,18 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
-        productRepository.save(product);
-        log.info("Created product {}", productDto);
-        return conversionService.convert(product, ProductResponse.class);
+        Product resultCheckingProduct = productRepository.findByNameAndDescriptionAndCategories(product.getName(),
+                product.getDescription(),
+                product.getCategories());
+        if (resultCheckingProduct == null) {
+            productRepository.save(product);
+            log.info("Created product {}", productDto);
+            return conversionService.convert(product, ProductResponse.class);
+        } else {
+            log.info("Product {} already exists", productDto);
+            return conversionService.convert(resultCheckingProduct, ProductResponse.class);
+        }
+
     }
 
     @Override
