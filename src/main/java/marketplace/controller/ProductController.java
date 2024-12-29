@@ -6,7 +6,7 @@ import marketplace.dto.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import marketplace.service.ProductService;
+import marketplace.service.ProductServiceImpl;
 
 import java.util.List;
 
@@ -16,7 +16,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductServiceImpl productService;
 
     @PostMapping("")
     public ProductResponse addProduct(@RequestBody ProductRequestCreate request) {
