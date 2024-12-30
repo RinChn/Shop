@@ -6,6 +6,7 @@ import marketplace.dto.ProductResponse;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
+import marketplace.exceptions.DuplicateEntityException;
 import marketplace.exceptions.NonexistentProductArticleException;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
@@ -28,17 +29,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
-        Product resultCheckingProduct = productRepository.findByNameAndDescriptionAndCategories(product.getName(),
-                product.getDescription(),
-                product.getCategories()).orElse(null);
-        if (resultCheckingProduct == null) {
-            productRepository.save(product);
-            log.info("Created product {}", productDto);
-            return conversionService.convert(product, ProductResponse.class);
-        } else {
-            log.info("Product {} already exists", productDto);
-            return conversionService.convert(resultCheckingProduct, ProductResponse.class);
-        }
+        productRepository.findByArticle(product.getArticle())
+                .ifPresent(resultCheckingProduct -> {
+                    throw new DuplicateEntityException(product.getArticle());
+                });
+        productRepository.save(product);
+        log.info("Created product {}", productDto);
+        return conversionService.convert(product, ProductResponse.class);
 
     }
 
