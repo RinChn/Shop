@@ -10,6 +10,7 @@ public class DtoProductCreateToEntityConverter implements Converter<ProductReque
     @Override
     public Product convert(ProductRequestCreate source) {
         return Product.builder()
+                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .quantity(source.getQuantity())

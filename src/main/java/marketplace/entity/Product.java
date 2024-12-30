@@ -40,9 +40,6 @@ public class Product {
 
     @PrePersist
     public void prePersist() {
-        String intFromUuid = id.toString().replaceAll("[^0-9]", "");
-        intFromUuid = intFromUuid.substring(0, Math.min(9, intFromUuid.length()));
-        article = Integer.parseInt(intFromUuid);
         if (this.quantity == null) {
             this.quantity = 0;
         }

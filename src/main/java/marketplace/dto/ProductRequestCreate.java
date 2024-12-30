@@ -14,6 +14,9 @@ import java.math.BigDecimal;
 @Builder
 @AllArgsConstructor
 public class ProductRequestCreate {
+    @NotNull(message = "The article cannot be empty")
+    @Positive(message = "The article cannot be negative or zero")
+    private Integer article;
     @NotNull(message = "The name cannot be empty")
     private String name;
     private String description;
