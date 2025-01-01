@@ -26,9 +26,10 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public List<ProductResponse> getAllProducts() {
+    public List<ProductResponse> getAllProducts(@RequestParam(value = "page", defaultValue = "0") Integer pageNumber,
+                                                @RequestParam(value = "limit", defaultValue = "5") Integer pageSize) {
         log.info("Getting all products from the customer");
-        return productService.getAllProducts();
+        return productService.getAllProducts(pageNumber, pageSize);
     }
 
     @GetMapping("/{article}")
