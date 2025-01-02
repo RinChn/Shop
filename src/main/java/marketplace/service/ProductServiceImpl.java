@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import marketplace.exceptions.DuplicateEntityException;
 import marketplace.exceptions.NonexistentProductArticleException;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,10 +31,6 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
-        productRepository.findByArticle(product.getArticle())
-                .ifPresent(resultCheckingProduct -> {
-                    throw new DuplicateEntityException(product.getArticle());
-                });
         productRepository.save(product);
         log.info("Created product {}", productDto);
         return conversionService.convert(product, ProductResponse.class);
@@ -41,8 +39,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProductResponse> getAllProducts() {
-        return productRepository.findAll()
+    public List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize) {
+        return productRepository.findAll(PageRequest.of(pageNumber, pageSize))
                 .stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
                 .toList();
