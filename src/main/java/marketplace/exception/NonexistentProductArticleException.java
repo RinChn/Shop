@@ -1,4 +1,4 @@
-package marketplace.exceptions;
+package marketplace.exception;
 
 public class NonexistentProductArticleException extends RuntimeException {
     public NonexistentProductArticleException(Integer article) {
