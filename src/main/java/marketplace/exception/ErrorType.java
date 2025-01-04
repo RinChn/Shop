@@ -4,7 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum ErrorType {
-    NONEXISTENT_ARTICLE("There is no product with this item number.");
+    NONEXISTENT_ARTICLE("There is no product with this article."),
+    DUPLICATE("Duplicate article.");
 
     private final String message;
 

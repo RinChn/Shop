@@ -30,6 +30,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
+        productRepository.findByArticle(product.getArticle())
+                .ifPresent(resultCheckingProduct -> {
+                    throw new ApplicationException(ErrorType.DUPLICATE);
+                });
         productRepository.save(product);
         log.info("Created product {}", productDto);
         return conversionService.convert(product, ProductResponse.class);
