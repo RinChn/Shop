@@ -6,10 +6,9 @@ import marketplace.dto.ProductResponse;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
-import marketplace.exceptions.DuplicateEntityException;
-import marketplace.exceptions.NonexistentProductArticleException;
+import marketplace.exception.ApplicationException;
+import marketplace.exception.ErrorType;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
@@ -31,10 +30,13 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
+        productRepository.findByArticle(product.getArticle())
+                .ifPresent(resultCheckingProduct -> {
+                    throw new ApplicationException(ErrorType.DUPLICATE);
+                });
         productRepository.save(product);
         log.info("Created product {}", productDto);
         return conversionService.convert(product, ProductResponse.class);
-
     }
 
     @Override
@@ -51,7 +53,7 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProduct(Integer productArticle) {
         Product resultSearch = productRepository
                 .findByArticle(productArticle)
-                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
         return conversionService.convert(resultSearch, ProductResponse.class);
     }
 
@@ -60,7 +62,7 @@ public class ProductServiceImpl implements ProductService {
     public void deleteProduct(Integer productArticle) {
         Product product = productRepository
                 .findByArticle(productArticle)
-                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));;
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));;
         productRepository.delete(product);
         log.info("Deleted product {}", productArticle);
     }
@@ -71,7 +73,7 @@ public class ProductServiceImpl implements ProductService {
         Product entity;
         entity = productRepository
                 .findByArticle(productArticle)
-                .orElseThrow(() -> new NonexistentProductArticleException(productArticle));
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
         Optional.ofNullable(request.getName())
                 .ifPresent(entity::setName);
         Optional.ofNullable(request.getDescription())
