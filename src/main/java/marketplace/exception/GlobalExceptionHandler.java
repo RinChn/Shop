@@ -12,8 +12,8 @@ import java.sql.Timestamp;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
-    @ExceptionHandler(NonexistentProductArticleException.class)
-    public ResponseEntity<ErrorDetails> handleNonexistentProductArticleException(NonexistentProductArticleException ex) {
+    @ExceptionHandler(ApplicationException.class)
+    public ResponseEntity<ErrorDetails> handleNonexistentProductArticleException(ApplicationException ex) {
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .exceptionName(ex.getClass().getSimpleName())
                 .message(ex.getMessage())
