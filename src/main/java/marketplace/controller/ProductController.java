@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import marketplace.service.ProductServiceImpl;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("api/v1/product")
@@ -39,9 +40,15 @@ public class ProductController {
     }
 
     @DeleteMapping("/{article}")
-    public void deleteProduct(@PathVariable Integer article) {
+    public UUID deleteProduct(@PathVariable Integer article) {
         log.info("Deleting product {} from the customer", article);
-        productService.deleteProduct(article);
+        return productService.deleteProduct(article);
+    }
+
+    @DeleteMapping("")
+    public void deleteAllProducts() {
+        log.info("Deleting all products");
+        productService.deleteAllProducts();
     }
 
     @PutMapping("/{article}")

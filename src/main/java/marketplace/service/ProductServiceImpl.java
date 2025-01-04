@@ -10,13 +10,17 @@ import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -59,12 +63,20 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public void deleteProduct(Integer productArticle) {
+    public UUID deleteProduct(Integer productArticle) {
         Product product = productRepository
                 .findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));;
         productRepository.delete(product);
         log.info("Deleted product {}", productArticle);
+        return product.getId();
+    }
+
+    @Override
+    @Transactional
+    public void deleteAllProducts() {
+        productRepository.deleteAll();
+        log.info("Deleted all products");
     }
 
     @Override
@@ -90,4 +102,6 @@ public class ProductServiceImpl implements ProductService {
         log.info("Updated product {}", entity);
         return conversionService.convert(entity, ProductResponse.class);
     }
+
+
 }
