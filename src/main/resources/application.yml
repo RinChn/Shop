@@ -8,3 +8,6 @@ spring:
     database: postgresql
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
+scheduler:
+  enabled: true
+  period: PT30S
