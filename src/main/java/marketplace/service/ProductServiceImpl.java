@@ -10,8 +10,6 @@ import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +30,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Timer
     public ProductResponse createProduct(ProductRequestCreate productDto) {
         Product product = conversionService.convert(productDto, Product.class);
         productRepository.findByArticle(product.getArticle())
@@ -45,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Timer
     public List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize) {
         return productRepository.findAll(PageRequest.of(pageNumber, pageSize))
                 .stream()
@@ -54,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Timer
     public ProductResponse getProduct(Integer productArticle) {
         Product resultSearch = productRepository
                 .findByArticle(productArticle)
@@ -63,6 +64,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Timer
     public UUID deleteProduct(Integer productArticle) {
         Product product = productRepository
                 .findByArticle(productArticle)
@@ -74,6 +76,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Timer
     public void deleteAllProducts() {
         productRepository.deleteAll();
         log.info("Deleted all products");
@@ -81,6 +84,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @Timer
     public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
         Product entity;
         entity = productRepository
