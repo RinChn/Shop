@@ -3,7 +3,6 @@ package marketplace.service;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductResponse;
-import org.springframework.data.domain.Page;
 
 import java.util.List;
 import java.util.UUID;
