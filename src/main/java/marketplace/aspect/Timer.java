@@ -1,4 +1,4 @@
-package marketplace.service;
+package marketplace.aspect;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

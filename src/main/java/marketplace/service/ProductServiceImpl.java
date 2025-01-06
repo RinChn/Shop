@@ -1,5 +1,6 @@
 package marketplace.service;
 
+import marketplace.aspect.Timer;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductResponse;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
