@@ -31,7 +31,6 @@ public class ProductServiceImplTest {
     @InjectMocks
     ProductServiceImpl productService;
 
-
     @Test
     void getAllProducts() {
         Mockito.when(productRepository.findAll(PageRequest.of(0, 5)))
