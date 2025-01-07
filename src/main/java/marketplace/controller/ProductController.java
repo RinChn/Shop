@@ -45,12 +45,6 @@ public class ProductController {
         return productService.deleteProduct(article);
     }
 
-    @DeleteMapping("")
-    public void deleteAllProducts() {
-        log.info("Deleting all products");
-        productService.deleteAllProducts();
-    }
-
     @PutMapping("/{article}")
     public ProductResponse updateProduct(@Valid @RequestBody ProductRequestUpdate request,
                                 @PathVariable Integer article) {

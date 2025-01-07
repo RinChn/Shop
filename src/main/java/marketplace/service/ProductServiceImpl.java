@@ -77,14 +77,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     @Timer
-    public void deleteAllProducts() {
-        productRepository.deleteAll();
-        log.info("Deleted all products");
-    }
-
-    @Override
-    @Transactional
-    @Timer
     public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
         Product entity;
         entity = productRepository
