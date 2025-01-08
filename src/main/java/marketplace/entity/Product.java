@@ -52,6 +52,9 @@ public class Product {
             this.dateOfCreation = new Timestamp(System.currentTimeMillis());
             this.dateOfCreation = new Timestamp(System.currentTimeMillis());
         }
+        if (this.isAvailable == null) {
+            this.isAvailable = true;
+        }
     }
 
 }
