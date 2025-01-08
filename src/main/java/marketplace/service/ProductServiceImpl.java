@@ -1,6 +1,7 @@
 package marketplace.service;
 
 import marketplace.aspect.Timer;
+import marketplace.dto.Filter;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductResponse;
@@ -102,5 +103,15 @@ public class ProductServiceImpl implements ProductService {
         Optional.ofNullable(value).ifPresent(setter);
     }
 
+    @Override
+    @Timer
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProducts(Filter filter) {
+        List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
+                filter.getPrice(), filter.getIsAvailable());
+        return foundProducts.stream()
+                .map(product -> conversionService.convert(product, ProductResponse.class))
+                .toList();
+    }
 
 }

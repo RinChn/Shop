@@ -1,6 +1,7 @@
 package marketplace.controller;
 
 import jakarta.validation.Valid;
+import marketplace.dto.Filter;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductResponse;
@@ -51,6 +52,14 @@ public class ProductController {
                                 @PathVariable Integer article) {
         log.info("Request from the controller to update the item with the article number {}", article);
         return productService.updateProduct(request, article);
+    }
+
+    @GetMapping("/search")
+    public List<ProductResponse> searchProducts(@RequestBody Filter filter) {
+        log.info("A request from the controller to search for a product with the values: name = {}, price = {},\n" +
+                        "quantity = {}, isAvailable = {}",
+        filter.getName(), filter.getPrice(), filter.getQuantity(), filter.getIsAvailable());
+        return productService.searchProducts(filter);
     }
 
 }
