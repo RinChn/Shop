@@ -16,6 +16,7 @@ public class DtoProductCreateToEntityConverter implements Converter<ProductReque
                 .quantity(source.getQuantity())
                 .price(source.getPrice())
                 .categories(source.getCategories())
+                .isAvailable(source.getIsAvailable())
                 .build();
 
     }

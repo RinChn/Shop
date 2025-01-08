@@ -92,6 +92,8 @@ public class ProductServiceImpl implements ProductService {
                 .ifPresent(entity::setCategories);
         Optional.ofNullable(request.getQuantity())
                 .ifPresent(entity::setQuantity);
+        Optional.ofNullable(request.getIsAvailable())
+                .ifPresent(entity::setIsAvailable);
 
         entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
         productRepository.save(entity);

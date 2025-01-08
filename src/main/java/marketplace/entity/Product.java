@@ -37,6 +37,8 @@ public class Product {
     Timestamp dateOfLastChangesQuantity;
     @Column(name = "date_creation", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     Timestamp dateOfCreation;
+    @Column(name = "is_available", nullable = false, columnDefinition = "True")
+    Boolean isAvailable;
 
     @PrePersist
     public void prePersist() {

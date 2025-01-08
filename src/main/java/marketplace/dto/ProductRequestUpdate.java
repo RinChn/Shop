@@ -19,4 +19,5 @@ public class ProductRequestUpdate {
     private BigDecimal price;
     @PositiveOrZero(message = "The quantity cannot be negative")
     private Integer quantity;
+    private Boolean isAvailable;
 }
