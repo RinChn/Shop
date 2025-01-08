@@ -38,7 +38,7 @@ public class ProductServiceImpl implements ProductService {
                     throw new ApplicationException(ErrorType.DUPLICATE);
                 });
         productRepository.save(product);
-        log.info("Created product {}", productDto);
+        log.info("Created product with article {}", product.getArticle());
         return conversionService.convert(product, ProductResponse.class);
     }
 
@@ -70,7 +70,7 @@ public class ProductServiceImpl implements ProductService {
                 .findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));;
         productRepository.delete(product);
-        log.info("Deleted product {}", productArticle);
+        log.info("Deleted product with article {}", productArticle);
         return product.getId();
     }
 
@@ -94,6 +94,7 @@ public class ProductServiceImpl implements ProductService {
                 .ifPresent(entity::setQuantity);
         Optional.ofNullable(request.getIsAvailable())
                 .ifPresent(entity::setIsAvailable);
+        log.info("Updated product with article {}", product.getArticle());
 
         entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
         productRepository.save(entity);
