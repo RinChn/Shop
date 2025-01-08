@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -56,19 +57,21 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     @Timer
     public ProductResponse getProduct(Integer productArticle) {
-        Product resultSearch = productRepository
-                .findByArticle(productArticle)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        Product resultSearch = searchByArticleInRepository(productArticle);
         return conversionService.convert(resultSearch, ProductResponse.class);
+    }
+
+    private Product searchByArticleInRepository(Integer article) {
+        return productRepository
+                .findByArticle(article)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
     }
 
     @Override
     @Transactional
     @Timer
     public UUID deleteProduct(Integer productArticle) {
-        Product product = productRepository
-                .findByArticle(productArticle)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));;
+        Product product = searchByArticleInRepository(productArticle);
         productRepository.delete(product);
         log.info("Deleted product with article {}", productArticle);
         return product.getId();
@@ -78,28 +81,25 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Timer
     public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
-        Product entity;
-        entity = productRepository
-                .findByArticle(productArticle)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
-        Optional.ofNullable(request.getName())
-                .ifPresent(entity::setName);
-        Optional.ofNullable(request.getDescription())
-                .ifPresent(entity::setDescription);
-        Optional.ofNullable(request.getPrice())
-                .ifPresent(entity::setPrice);
-        Optional.ofNullable(request.getCategories())
-                .ifPresent(entity::setCategories);
-        Optional.ofNullable(request.getQuantity())
-                .ifPresent(entity::setQuantity);
-        Optional.ofNullable(request.getIsAvailable())
-                .ifPresent(entity::setIsAvailable);
+        Product product = searchByArticleInRepository(productArticle);
+        setAllFieldsIfNotNull(product, request);
+        productRepository.save(product);
         log.info("Updated product with article {}", product.getArticle());
+        return conversionService.convert(product, ProductResponse.class);
+    }
 
-        entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
-        productRepository.save(entity);
-        log.info("Updated product {}", entity);
-        return conversionService.convert(entity, ProductResponse.class);
+    private void setAllFieldsIfNotNull(Product product, ProductRequestUpdate request) {
+        setFieldIfNotNull(request.getName(), product::setName);
+        setFieldIfNotNull(request.getDescription(), product::setDescription);
+        setFieldIfNotNull(request.getPrice(), product::setPrice);
+        setFieldIfNotNull(request.getCategories(), product::setCategories);
+        setFieldIfNotNull(request.getQuantity(), product::setQuantity);
+        setFieldIfNotNull(request.getIsAvailable(), product::setIsAvailable);
+        product.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private <T> void setFieldIfNotNull(T value, Consumer<T> setter) {
+        Optional.ofNullable(value).ifPresent(setter);
     }
 
 
