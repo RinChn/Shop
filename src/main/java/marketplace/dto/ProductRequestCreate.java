@@ -1,9 +1,6 @@
 package marketplace.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import jakarta.validation.constraints.*;
 import marketplace.entity.Category;
 
@@ -25,6 +22,8 @@ public class ProductRequestCreate {
     @PositiveOrZero(message = "The price cannot be negative")
     private BigDecimal price;
     @PositiveOrZero(message = "The quantity cannot be negative")
-    private Integer quantity;
-    private Boolean isAvailable;
+    @Builder.Default
+    private Integer quantity = 0;
+    @Builder.Default
+    private Boolean isAvailable = true;
 }
