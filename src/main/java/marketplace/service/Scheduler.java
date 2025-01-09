@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
+import static java.lang.Thread.sleep;
+
 @Configuration
 @Slf4j
 @EnableScheduling
@@ -20,8 +22,9 @@ public class Scheduler {
 
     @Scheduled(fixedRateString = "${scheduler.period}")
     @Transactional
-    void priceIncrease() {
+    void priceIncrease() throws InterruptedException {
         productRepository.increasePrices();
         log.info("Price increased");
+        sleep(30000);
     }
 }
