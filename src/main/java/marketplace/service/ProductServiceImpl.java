@@ -58,21 +58,19 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     @Timer
     public ProductResponse getProduct(Integer productArticle) {
-        Product resultSearch = searchByArticleInRepository(productArticle);
-        return conversionService.convert(resultSearch, ProductResponse.class);
-    }
-
-    private Product searchByArticleInRepository(Integer article) {
-        return productRepository
-                .findByArticle(article)
+        Product resultSearch = productRepository
+                .findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        return conversionService.convert(resultSearch, ProductResponse.class);
     }
 
     @Override
     @Transactional
     @Timer
     public UUID deleteProduct(Integer productArticle) {
-        Product product = searchByArticleInRepository(productArticle);
+        Product product = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
         productRepository.delete(product);
         log.info("Deleted product with article {}", productArticle);
         return product.getId();
@@ -82,7 +80,9 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Timer
     public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
-        Product product = searchByArticleInRepository(productArticle);
+        Product product = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
         setAllFieldsIfNotNull(product, request);
         productRepository.save(product);
         log.info("Updated product with article {}", product.getArticle());
