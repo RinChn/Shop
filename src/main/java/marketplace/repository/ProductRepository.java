@@ -1,5 +1,6 @@
 package marketplace.repository;
 
+import marketplace.dto.Filter;
 import marketplace.entity.Category;
 import marketplace.entity.Product;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +9,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -17,12 +20,13 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product p WHERE p.article = :article")
     Optional<Product> findByArticle(@Param("article") Integer article);
 
-    @Query("SELECT p FROM Product p WHERE p.name = :name AND p.description = :description AND p.categories = :category")
-    Optional<Product> findByNameAndDescriptionAndCategories(@Param("name") String name, @Param("description") String description,
-                                                         @Param("category") Category category);
-
     @Modifying
     @Query("UPDATE Product p SET p.price = p.price * 1.1")
     void increasePrices();
 
+    @Query("SELECT p FROM Product p WHERE (:name IS NULL OR p.name LIKE %:name%) " +
+            "AND (:quantity IS NULL OR p.quantity >= :quantity) AND (:price IS NULL OR p.price <= :price) " +
+            "AND (:isAvailable IS NULL OR p.isAvailable = :isAvailable)")
+    List<Product> searchUsingFilter(@Param("name") String name, @Param("quantity") Integer quantity,
+                                    @Param("price") BigDecimal price, @Param("isAvailable") Boolean isAvailable);
 }

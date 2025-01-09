@@ -1,6 +1,7 @@
 package marketplace.service;
 
 import marketplace.aspect.Timer;
+import marketplace.dto.Filter;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductResponse;
@@ -19,6 +20,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -38,7 +40,7 @@ public class ProductServiceImpl implements ProductService {
                     throw new ApplicationException(ErrorType.DUPLICATE);
                 });
         productRepository.save(product);
-        log.info("Created product {}", productDto);
+        log.info("Created product with article {}", product.getArticle());
         return conversionService.convert(product, ProductResponse.class);
     }
 
@@ -68,9 +70,9 @@ public class ProductServiceImpl implements ProductService {
     public UUID deleteProduct(Integer productArticle) {
         Product product = productRepository
                 .findByArticle(productArticle)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));;
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
         productRepository.delete(product);
-        log.info("Deleted product {}", productArticle);
+        log.info("Deleted product with article {}", productArticle);
         return product.getId();
     }
 
@@ -78,26 +80,38 @@ public class ProductServiceImpl implements ProductService {
     @Transactional
     @Timer
     public ProductResponse updateProduct(ProductRequestUpdate request, Integer productArticle) {
-        Product entity;
-        entity = productRepository
+        Product product = productRepository
                 .findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
-        Optional.ofNullable(request.getName())
-                .ifPresent(entity::setName);
-        Optional.ofNullable(request.getDescription())
-                .ifPresent(entity::setDescription);
-        Optional.ofNullable(request.getPrice())
-                .ifPresent(entity::setPrice);
-        Optional.ofNullable(request.getCategories())
-                .ifPresent(entity::setCategories);
-        Optional.ofNullable(request.getQuantity())
-                .ifPresent(entity::setQuantity);
-
-        entity.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
-        productRepository.save(entity);
-        log.info("Updated product {}", entity);
-        return conversionService.convert(entity, ProductResponse.class);
+        setAllFieldsIfNotNull(product, request);
+        productRepository.save(product);
+        log.info("Updated product with article {}", product.getArticle());
+        return conversionService.convert(product, ProductResponse.class);
     }
 
+    private void setAllFieldsIfNotNull(Product product, ProductRequestUpdate request) {
+        setFieldIfNotNull(request.getName(), product::setName);
+        setFieldIfNotNull(request.getDescription(), product::setDescription);
+        setFieldIfNotNull(request.getPrice(), product::setPrice);
+        setFieldIfNotNull(request.getCategories(), product::setCategories);
+        setFieldIfNotNull(request.getQuantity(), product::setQuantity);
+        setFieldIfNotNull(request.getIsAvailable(), product::setIsAvailable);
+        product.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
+    }
+
+    private <T> void setFieldIfNotNull(T value, Consumer<T> setter) {
+        Optional.ofNullable(value).ifPresent(setter);
+    }
+
+    @Override
+    @Timer
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProducts(Filter filter) {
+        List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
+                filter.getPrice(), filter.getIsAvailable());
+        return foundProducts.stream()
+                .map(product -> conversionService.convert(product, ProductResponse.class))
+                .toList();
+    }
 
 }

@@ -19,6 +19,7 @@ public class ProductToDtoConverter implements Converter<Product, ProductResponse
                 .dateOfLastChangesQuantity(source.getDateOfLastChangesQuantity())
                 .dateOfCreation(source.getDateOfCreation())
                 .article(source.getArticle())
+                .isAvailable(source.getIsAvailable())
                 .build();
     }
 }

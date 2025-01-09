@@ -20,4 +20,5 @@ public class ProductResponse {
     private Integer quantity;
     private Timestamp dateOfLastChangesQuantity;
     private Timestamp dateOfCreation;
+    private Boolean isAvailable;
 }

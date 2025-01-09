@@ -1,5 +1,6 @@
 package marketplace.service;
 
+import marketplace.dto.Filter;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductResponse;
@@ -14,5 +15,6 @@ public interface ProductService {
     public UUID deleteProduct(Integer productArticle);
     public ProductResponse getProduct(Integer productArticle);
     public List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize);
+    public List<ProductResponse> searchProducts(Filter filter);
 
 }

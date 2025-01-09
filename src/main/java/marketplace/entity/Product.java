@@ -32,24 +32,15 @@ public class Product {
     @Column(name = "price", nullable = false)
     BigDecimal price;
     @Column(name = "quantity", columnDefinition = "integer default 0")
-    Integer quantity;
+    @Builder.Default
+    Integer quantity = 0;
     @Column(name = "date_last_changes_quantity", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
-    Timestamp dateOfLastChangesQuantity;
+    @Builder.Default
+    Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
     @Column(name = "date_creation", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
-    Timestamp dateOfCreation;
-
-    @PrePersist
-    public void prePersist() {
-        if (this.quantity == null) {
-            this.quantity = 0;
-        }
-        if (this.dateOfLastChangesQuantity == null) {
-            this.dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
-        }
-        if (this.dateOfCreation == null) {
-            this.dateOfCreation = new Timestamp(System.currentTimeMillis());
-            this.dateOfCreation = new Timestamp(System.currentTimeMillis());
-        }
-    }
-
+    @Builder.Default
+    Timestamp dateOfCreation = new Timestamp(System.currentTimeMillis());
+    @Column(name = "is_available", nullable = false, columnDefinition = "True")
+    @Builder.Default
+    Boolean isAvailable = true;
 }

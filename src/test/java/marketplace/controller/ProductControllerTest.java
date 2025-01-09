@@ -4,8 +4,6 @@ import marketplace.repository.ProductRepository;
 import marketplace.util.IncorrectTestProduct;
 import marketplace.util.TestProduct;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.data.domain.PageImpl;
@@ -20,7 +18,6 @@ import static io.restassured.RestAssured.given;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ExtendWith(MockitoExtension.class)
 public class ProductControllerTest {
 
     @MockitoBean
