@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @Getter
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProductRequestCreate {
     @NotNull(message = "The article cannot be empty")
     @Positive(message = "The article cannot be negative or zero")
