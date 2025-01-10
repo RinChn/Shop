@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -96,7 +95,6 @@ public class ProductServiceImpl implements ProductService {
         setFieldIfNotNull(request.getCategories(), product::setCategories);
         setFieldIfNotNull(request.getQuantity(), product::setQuantity);
         setFieldIfNotNull(request.getIsAvailable(), product::setIsAvailable);
-        product.setDateOfLastChangesQuantity(new Timestamp(System.currentTimeMillis()));
     }
 
     private <T> void setFieldIfNotNull(T value, Consumer<T> setter) {
