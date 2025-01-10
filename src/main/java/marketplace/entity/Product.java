@@ -2,7 +2,7 @@ package marketplace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ValueGenerationType;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -36,6 +36,7 @@ public class Product {
     Integer quantity = 0;
     @Column(name = "date_last_changes_quantity", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     @Builder.Default
+    @UpdateTimestamp
     Timestamp dateOfLastChangesQuantity = new Timestamp(System.currentTimeMillis());
     @Column(name = "date_creation", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
     @Builder.Default
