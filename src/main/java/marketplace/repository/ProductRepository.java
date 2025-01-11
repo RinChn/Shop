@@ -1,8 +1,8 @@
 package marketplace.repository;
 
-import marketplace.dto.Filter;
-import marketplace.entity.Category;
+import jakarta.persistence.LockModeType;
 import marketplace.entity.Product;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,12 +17,12 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
+    @Lock(LockModeType.PESSIMISTIC_READ)
+    @Query("SELECT p FROM Product p")
+    List<Product> getAllProductsForLock();
+
     @Query("SELECT p FROM Product p WHERE p.article = :article")
     Optional<Product> findByArticle(@Param("article") Integer article);
-
-    @Modifying
-    @Query("UPDATE Product p SET p.price = p.price * 1.1")
-    void increasePrices();
 
     @Query("SELECT p FROM Product p WHERE (:name IS NULL OR p.name LIKE %:name%) " +
             "AND (:quantity IS NULL OR p.quantity >= :quantity) AND (:price IS NULL OR p.price <= :price) " +
