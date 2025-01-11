@@ -10,15 +10,21 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Service
@@ -107,9 +113,63 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> searchProducts(Filter filter) {
         List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
                 filter.getPrice(), filter.getIsAvailable());
+        fillXlsxFile(foundProducts);
         return foundProducts.stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
                 .toList();
+    }
+
+    public void fillXlsxFile(List<Product> products) {
+        XSSFWorkbook workbook = new XSSFWorkbook();
+        XSSFSheet sheet = workbook.createSheet("Main sheet");
+        fillSheet(sheet, products);
+        String dateForFileName = LocalDateTime.now()
+                .truncatedTo(ChronoUnit.SECONDS)
+                .toString().replace(":", "-").replace("T", "_");;
+        String filePath = "src\\main\\resources\\reports\\report-" + dateForFileName + ".xlsx";
+        saveWorkbookToFile(workbook, filePath);
+    }
+
+    private void fillSheet(XSSFSheet sheet, List<Product> products) {
+        List<String> headers = getProductFieldNames();
+        createHeaderRow(sheet, headers);
+        for (int i = 0; i < products.size(); i++) {
+            Row row = sheet.createRow(i + 1);
+            fillProductData(row, products.get(i));
+        }
+    }
+
+    private void createHeaderRow(XSSFSheet sheet, List<String> headers) {
+        Row heads = sheet.createRow(0);
+        for (int i = 1; i < headers.size(); i++) {
+            heads.createCell(i - 1).setCellValue(headers.get(i));
+        }
+    }
+
+    private void fillProductData(Row row, Product product) {
+        row.createCell(0).setCellValue(product.getArticle());
+        row.createCell(1).setCellValue(product.getName());
+        row.createCell(2).setCellValue(product.getDescription());
+        row.createCell(3).setCellValue(product.getCategories().toString());
+        row.createCell(4).setCellValue(product.getPrice().toString());
+        row.createCell(5).setCellValue(product.getQuantity().toString());
+        row.createCell(6).setCellValue(product.getDateOfLastChangesQuantity().toString());
+        row.createCell(7).setCellValue(product.getDateOfCreation().toString());
+        row.createCell(8).setCellValue(product.getIsAvailable().toString());
+    }
+
+    private List<String> getProductFieldNames() {
+        return Arrays.stream(Product.class.getDeclaredFields())
+                .map(Field::getName)
+                .toList();
+    }
+
+    private void saveWorkbookToFile(XSSFWorkbook workbook, String filePath) {
+        try (FileOutputStream out = new FileOutputStream(filePath)) {
+            workbook.write(out);
+        } catch (IOException exception) {
+            throw new RuntimeException("Failed to save workbook to file", exception);
+        }
     }
 
 }
