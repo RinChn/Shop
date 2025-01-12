@@ -1,4 +1,4 @@
-package marketplace.service;
+package marketplace.util;
 
 import marketplace.entity.Product;
 import marketplace.exception.ApplicationException;
