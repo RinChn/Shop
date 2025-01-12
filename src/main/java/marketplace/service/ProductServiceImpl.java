@@ -168,7 +168,7 @@ public class ProductServiceImpl implements ProductService {
         try (FileOutputStream out = new FileOutputStream(filePath)) {
             workbook.write(out);
         } catch (IOException exception) {
-            throw new RuntimeException("Failed to save workbook to file", exception);
+            throw new ApplicationException(ErrorType.ERROR_FILE_SAVED);
         }
     }
 
