@@ -10,15 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import marketplace.util.FileHandler;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import marketplace.repository.ProductRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Consumer;
 
 @Service
@@ -107,9 +106,12 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> searchProducts(Filter filter) {
         List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
                 filter.getPrice(), filter.getIsAvailable());
+        FileHandler.AddingListOfProductsToExcel(foundProducts);
         return foundProducts.stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
                 .toList();
     }
+
+
 
 }

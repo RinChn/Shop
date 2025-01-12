@@ -1,4 +1,5 @@
 target/
+src/main/resources/reports/
 .idea/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
