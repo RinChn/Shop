@@ -3,5 +3,3 @@ databaseChangeLog:
       file: db/changelog/001-create-product-table.sql
   - include:
       file: db/changelog/002-new-column-isAvailable-product-table.sql
-  - include:
-      file: db/changelog/003-create-documents-table.sql
