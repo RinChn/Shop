@@ -6,6 +6,7 @@ import marketplace.exception.ErrorType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -69,5 +70,15 @@ public class FileHandler {
         } catch (IOException exception) {
             throw new ApplicationException(ErrorType.ERROR_FILE_SAVED);
         }
+    }
+
+    public static byte[] getFileContent(MultipartFile file) {
+        byte[] fileContent;
+        try {
+            fileContent = file.getBytes();
+        } catch (IOException exception) {
+            throw new ApplicationException(ErrorType.INVALID_FILE_CONTENT);
+        }
+        return fileContent;
     }
 }
