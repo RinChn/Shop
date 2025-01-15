@@ -1,7 +1,12 @@
 package marketplace.service;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
 import java.util.List;
 
 public interface DocumentsService {
-    public List<String> allFilesNames();
+    List<String> allFilesNames();
+    String uploadDocument(MultipartFile multipartFile);
+    MultipartFile downloadDocument(String fileName);
 }
