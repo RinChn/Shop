@@ -1,10 +1,9 @@
 package marketplace.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.dto.ProductResponse;
-import marketplace.exception.ApplicationException;
-import marketplace.exception.ErrorType;
+import marketplace.util.ExchangeRateHandler;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -13,20 +12,17 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
+import java.util.Objects;
 
-@RestControllerAdvice
+@RestControllerAdvice()
 @Slf4j
+@RequiredArgsConstructor
 public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> {
+    private final ExchangeRateHandler exchangeRateHandler;
+
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
-        return ProductResponse.class.isAssignableFrom(returnType.getParameterType()) ||
-                (List.class.isAssignableFrom(returnType.getParameterType()) &&
-                        returnType.getGenericParameterType().getTypeName().contains("ProductResponse"));
+        return "getProductByArticle".equals(Objects.requireNonNull(returnType.getMethod()).getName());
     }
 
     @Override
