@@ -1,5 +1,6 @@
 package marketplace.dto;
 
+import lombok.Setter;
 import marketplace.entity.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class ProductResponse {
