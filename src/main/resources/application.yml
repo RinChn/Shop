@@ -11,3 +11,6 @@ spring:
 scheduler:
   enabled: true
   period: PT30S
+app:
+  file-names:
+    exchange-rate: "src/main/resources/parameters/ExchangeRate.json"

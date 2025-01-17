@@ -36,24 +36,9 @@ public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> 
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        String fileName = "src/main/resources/parameters/ExchangeRate.json";
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Double> exchangeRate;
-        try {
-            exchangeRate = mapper.readValue(new File(fileName), Map.class);
-        } catch (IOException exception) {
-            throw new ApplicationException(ErrorType.INVALID_EXCHANGE_RATE_FILE);
-        }
-        if (body instanceof ProductResponse product) {
-            product.setPrice(product.getPrice().multiply(BigDecimal.valueOf(exchangeRate.get("USD"))));
-            return product;
-        } else if (body instanceof List) {
-            List<ProductResponse> products = (List<ProductResponse>) body;
-            for (ProductResponse product : products) {
-                product.setPrice(product.getPrice().multiply(BigDecimal.valueOf(exchangeRate.get("USD"))));
-            }
-            return products;
-        }
-        return body;
+        log.info("Convert prices to dollars");
+        ProductResponse product = (ProductResponse) body;
+        product.setPrice(product.getPrice().multiply(exchangeRateHandler.getUsdExchangeRate()));
+        return product;
     }
 }
