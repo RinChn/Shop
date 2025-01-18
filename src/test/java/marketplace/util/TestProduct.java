@@ -1,10 +1,10 @@
 package marketplace.util;
 
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductRequestUpdate;
-import marketplace.dto.ProductResponse;
-import marketplace.entity.Category;
-import marketplace.entity.Product;
+import app.marketplace.dto.ProductRequestCreate;
+import app.marketplace.dto.ProductRequestUpdate;
+import app.marketplace.dto.ProductResponse;
+import app.marketplace.entity.Category;
+import app.marketplace.entity.Product;
 
 import java.math.BigDecimal;
 
