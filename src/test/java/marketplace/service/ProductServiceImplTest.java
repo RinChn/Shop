@@ -2,7 +2,7 @@ package marketplace.service;
 
 import app.marketplace.dto.ProductResponse;
 import app.marketplace.entity.Product;
-import app.marketplace.exception.ApplicationException;
+import app.exception.ApplicationException;
 import app.marketplace.repository.ProductRepository;
 import app.marketplace.service.ProductServiceImpl;
 import marketplace.util.TestProduct;
