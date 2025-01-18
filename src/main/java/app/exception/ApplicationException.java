@@ -1,4 +1,4 @@
-package app.marketplace.exception;
+package app.exception;
 
 public class ApplicationException extends RuntimeException {
     public ApplicationException(ErrorType errorType) {

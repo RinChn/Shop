@@ -1,4 +1,4 @@
-package app.marketplace.exception;
+package app.exception;
 
 import lombok.Getter;
 
