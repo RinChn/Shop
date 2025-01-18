@@ -1,9 +1,9 @@
 package app.marketplace.controller;
 
+import app.marketplace.util.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import app.marketplace.dto.ProductResponse;
-import app.marketplace.util.ExchangeRateHandler;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -14,10 +14,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import java.util.Objects;
 
-@RestControllerAdvice()
+@RestControllerAdvice
 @Slf4j
 @RequiredArgsConstructor
 public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> {
+
     private final ExchangeRateHandler exchangeRateHandler;
 
     @Override
@@ -34,7 +35,8 @@ public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> 
                                   ServerHttpResponse response) {
         log.info("Convert prices to dollars");
         ProductResponse product = (ProductResponse) body;
-        product.setPrice(product.getPrice().multiply(exchangeRateHandler.getUsdExchangeRate()));
+        product.setPrice(product.getPrice()
+                .multiply(exchangeRateHandler.getUsdFromService()));
         return product;
     }
 }
