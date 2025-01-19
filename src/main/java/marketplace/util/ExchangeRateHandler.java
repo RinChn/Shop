@@ -41,7 +41,7 @@ public class ExchangeRateHandler {
     public BigDecimal getUsdFromService() {
         try {
             log.info("Successfully fetching USD exchange rate from service");
-            return restTemplate.getForObject("http://localhost:8080/api/v1/exchange/usd",
+            return restTemplate.getForObject("http://localhost:8081/api/v2/exchange/usd",
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch USD exchange rate from service.");
