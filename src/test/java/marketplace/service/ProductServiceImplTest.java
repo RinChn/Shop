@@ -1,10 +1,9 @@
 package marketplace.service;
 
-import app.marketplace.dto.ProductResponse;
-import app.marketplace.entity.Product;
-import app.exception.ApplicationException;
-import app.marketplace.repository.ProductRepository;
-import app.marketplace.service.ProductServiceImpl;
+import marketplace.dto.ProductResponse;
+import marketplace.entity.Product;
+import marketplace.exception.ApplicationException;
+import marketplace.repository.ProductRepository;
 import marketplace.util.TestProduct;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

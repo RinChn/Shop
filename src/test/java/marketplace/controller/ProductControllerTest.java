@@ -1,6 +1,6 @@
 package marketplace.controller;
 
-import app.marketplace.repository.ProductRepository;
+import marketplace.repository.ProductRepository;
 import marketplace.util.IncorrectTestProduct;
 import marketplace.util.TestProduct;
 import org.junit.jupiter.api.Test;
