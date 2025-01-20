@@ -1,6 +1,5 @@
 package marketplace.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import marketplace.entity.Category;
 import lombok.*;

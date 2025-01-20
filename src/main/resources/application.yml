@@ -8,6 +8,10 @@ spring:
     database: postgresql
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
+  cache:
+    cache-names: "exchangeCache"
+    caffeine:
+      spec: maximumSize=1,expireAfterWrite=1m
 scheduler:
   enabled: true
   period: PT30S

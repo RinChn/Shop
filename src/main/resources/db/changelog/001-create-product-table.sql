@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset morik:0
+--changeset morik:2
 
 CREATE TABLE product
 (
@@ -8,7 +8,7 @@ CREATE TABLE product
     name VARCHAR(255) NOT NULL,
     description TEXT,
     categories VARCHAR(255),
-    price DECIMAL NOT NULL,
+    price DECIMAL(38, 6) NOT NULL,
     quantity INTEGER default 0,
     date_last_changes_quantity TIMESTAMP default CURRENT_TIMESTAMP,
     date_creation TIMESTAMP default CURRENT_TIMESTAMP,
