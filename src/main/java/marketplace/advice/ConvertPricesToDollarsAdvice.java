@@ -1,4 +1,4 @@
-package marketplace.controller;
+package marketplace.advice;
 
 import marketplace.util.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.math.RoundingMode;
 import java.util.Objects;
 
 @RestControllerAdvice
