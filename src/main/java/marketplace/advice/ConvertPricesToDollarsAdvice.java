@@ -37,7 +37,7 @@ public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> 
         log.info("Convert prices to dollars");
         ProductResponse product = (ProductResponse) body;
         product.setPrice(product.getPrice()
-                .multiply(exchangeRateHandler.getUsdFromService()));
+                .divide(exchangeRateHandler.getUsdFromService(), 2, RoundingMode.HALF_UP));
         return product;
     }
 }
