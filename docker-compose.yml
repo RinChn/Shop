@@ -1,0 +1,25 @@
+volumes:
+  pg_shop:
+
+services:
+  product_db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=shop
+    volumes:
+      - pg_shop:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5433:5432"
+
+  app:
+    restart: always
+    build: .
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      - product_db
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://product_db:5432/shop"
