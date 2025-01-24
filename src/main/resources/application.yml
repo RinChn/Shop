@@ -18,3 +18,5 @@ scheduler:
 app:
   file-names:
     exchange-rate: "src/main/resources/parameters/ExchangeRate.json"
+  exchange:
+    url: "${EXCHANGE_SERVICE_URL:http://localhost:8081}"
