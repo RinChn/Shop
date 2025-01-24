@@ -13,13 +13,21 @@ services:
       - pg_shop:/var/lib/postgresql/data
     ports:
       - "127.0.0.1:5433:5432"
-
+    networks:
+      - marketplace
   app:
     restart: always
     build: .
     ports:
       - "127.0.0.1:8080:8080"
+    networks:
+      - marketplace
     depends_on:
       - product_db
     environment:
       SPRING_DATASOURCE_URL: "jdbc:postgresql://product_db:5432/shop"
+      EXCHANGE_SERVICE_URL: "http://exchange:8081"
+
+networks:
+  marketplace:
+    external: true
