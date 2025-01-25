@@ -1,5 +1,7 @@
 package marketplace.advice;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import marketplace.util.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,8 +12,11 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Objects;
 
@@ -34,10 +39,21 @@ public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> 
                                   Class<? extends HttpMessageConverter<?>> selectedConverterType,
                                   ServerHttpRequest request,
                                   ServerHttpResponse response) {
-        log.info("Convert prices to dollars");
+        HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder
+                .getRequestAttributes()).getRequest();
+        String currencyName = httpServletRequest.getHeader("Currency");
+        HttpSession session = httpServletRequest.getSession();
+        String currentCurrency = exchangeRateHandler.getCurrentCurrency(currencyName, session);
+        log.info("Convert prices to {}", currentCurrency);
         ProductResponse product = (ProductResponse) body;
+        BigDecimal exchangeRate = BigDecimal.valueOf(1.0);
+        if (currentCurrency.equals("USD")) {
+            exchangeRate = exchangeRateHandler.getUsdFromService();
+        } else if (currentCurrency.equals("EUR")) {
+            exchangeRate = exchangeRateHandler.getEurFromService();
+        }
         product.setPrice(product.getPrice()
-                .divide(exchangeRateHandler.getUsdFromService(), 2, RoundingMode.HALF_UP));
+                .divide(exchangeRate, 2, RoundingMode.HALF_UP));
         return product;
     }
 }
