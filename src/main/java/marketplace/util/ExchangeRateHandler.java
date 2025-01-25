@@ -23,6 +23,8 @@ public class ExchangeRateHandler {
 
     @Value("${app.file-names.exchange-rate}")
     private String filePath;
+    @Value("${app.exchange.url}")
+    private String exchangeServiceUrl;
 
     public BigDecimal getUsdExchangeRateFromFile() {
         ObjectMapper mapper = new ObjectMapper();
@@ -41,7 +43,7 @@ public class ExchangeRateHandler {
     public BigDecimal getUsdFromService() {
         try {
             log.info("Successfully fetching USD exchange rate from service");
-            return restTemplate.getForObject("http://localhost:8081/api/v2/exchange/usd",
+            return restTemplate.getForObject(exchangeServiceUrl + "/api/v2/exchange/usd",
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch USD exchange rate from service.");
