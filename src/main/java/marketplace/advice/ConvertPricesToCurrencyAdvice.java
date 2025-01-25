@@ -23,7 +23,7 @@ import java.util.Objects;
 @RestControllerAdvice
 @Slf4j
 @RequiredArgsConstructor
-public class ConvertPricesToDollarsAdvice implements ResponseBodyAdvice<Object> {
+public class ConvertPricesToCurrencyAdvice implements ResponseBodyAdvice<Object> {
 
     private final ExchangeRateHandler exchangeRateHandler;
 
