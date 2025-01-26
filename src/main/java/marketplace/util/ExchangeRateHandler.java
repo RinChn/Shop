@@ -14,6 +14,8 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -32,8 +34,9 @@ public class ExchangeRateHandler {
     public String getAndUpdateCurrentCurrency(String currencyName, HttpSession session) {
         if (currencyName != null && !currencyName.isEmpty()) {
             currencyName = currencyName.toUpperCase();
-            Map<String, Double> allCurrencies = readAllCurrenciesFromFile();
-            for (String key : allCurrencies.keySet()) {
+            List<String> allCurrencies = Arrays.stream(CurrencyNames.values())
+                    .map(Enum::toString).toList();
+            for (String key : allCurrencies) {
                 if (currencyName.equals(key)) {
                     session.setAttribute("currency", currencyName);
                     return currencyName;
