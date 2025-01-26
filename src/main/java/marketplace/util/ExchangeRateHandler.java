@@ -73,17 +73,14 @@ public class ExchangeRateHandler {
     }
 
     public BigDecimal getExchangeRateFromFile(String currencyName) {
-        Map<String, Double> exchangeRate = readAllCurrenciesFromFile();
-        log.info("Successfully exchange rate from file");
-        return BigDecimal.valueOf(exchangeRate.get(currencyName));
-    }
-
-    private Map<String, Double> readAllCurrenciesFromFile() {
+        Map<String, Double> exchangeRate;
         try {
-            return new ObjectMapper().readValue(new File(filePath), Map.class);
+            exchangeRate = new ObjectMapper().readValue(new File(filePath), Map.class);
         } catch (IOException exception) {
             log.error("Error reading file");
             throw new ApplicationException(ErrorType.INVALID_EXCHANGE_RATE_FILE);
         }
+        log.info("Successfully exchange rate from file");
+        return BigDecimal.valueOf(exchangeRate.get(currencyName));
     }
 }
