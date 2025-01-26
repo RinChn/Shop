@@ -1,7 +1,6 @@
 package marketplace.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpSession;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +13,6 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @Component
@@ -30,26 +27,6 @@ public class ExchangeRateHandler {
     private String exchangeServiceUrl;
     @Value("${app.exchange.url-get-currency}")
     private String currencyUrl;
-
-    public String getAndUpdateCurrentCurrency(String currencyName, HttpSession session) {
-        if (currencyName != null && !currencyName.isEmpty()) {
-            currencyName = currencyName.toUpperCase();
-            List<String> allCurrencies = Arrays.stream(CurrencyNames.values())
-                    .map(Enum::toString).toList();
-            for (String key : allCurrencies) {
-                if (currencyName.equals(key)) {
-                    session.setAttribute("currency", currencyName);
-                    return currencyName;
-                }
-            }
-        }
-        if (session.getAttribute("currency") != null)
-            return session.getAttribute("currency").toString();
-        else {
-            session.setAttribute("currency", CurrencyNames.RUB.toString());
-            return CurrencyNames.RUB.toString();
-        }
-    }
 
     @Cacheable(value = "exchangeCache", key = "'usd'")
     public BigDecimal getUsdFromService() {
