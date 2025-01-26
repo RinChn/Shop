@@ -41,8 +41,8 @@ public class ExchangeRateHandler {
         if (session.getAttribute("currency") != null)
             return session.getAttribute("currency").toString();
         else {
-            session.setAttribute("currency", "RUB");
-            return "RUB";
+            session.setAttribute("currency", CurrencyNames.RUB.toString());
+            return CurrencyNames.RUB.toString();
         }
     }
 
@@ -54,7 +54,7 @@ public class ExchangeRateHandler {
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch USD exchange rate from service.");
-            return getExchangeRateFromFile("USD");
+            return getExchangeRateFromFile(CurrencyNames.USD.toString());
         }
     }
 
