@@ -26,6 +26,8 @@ public class ExchangeRateHandler {
     private String filePath;
     @Value("${app.exchange.url}")
     private String exchangeServiceUrl;
+    @Value("${app.exchange.url-get-currency}")
+    private String currencyUrl;
 
     public String getCurrentCurrency(String currencyName, HttpSession session) {
         if (currencyName != null && !currencyName.isEmpty()) {
@@ -50,7 +52,7 @@ public class ExchangeRateHandler {
     public BigDecimal getUsdFromService() {
         try {
             log.info("Successfully fetching USD exchange rate from service");
-            return restTemplate.getForObject(exchangeServiceUrl + "/api/v2/exchange/usd",
+            return restTemplate.getForObject(exchangeServiceUrl  + currencyUrl + "/usd",
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch USD exchange rate from service.");
@@ -62,7 +64,7 @@ public class ExchangeRateHandler {
     public BigDecimal getEurFromService() {
         try {
             log.info("Successfully fetching EUR exchange rate from service");
-            return restTemplate.getForObject(exchangeServiceUrl + "/api/v2/exchange/eur",
+            return restTemplate.getForObject(exchangeServiceUrl + currencyUrl + "/eur",
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch EUR exchange rate from service.");
