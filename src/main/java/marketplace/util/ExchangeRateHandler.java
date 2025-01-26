@@ -66,7 +66,7 @@ public class ExchangeRateHandler {
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch EUR exchange rate from service.");
-            return getExchangeRateFromFile("EUR");
+            return getExchangeRateFromFile(CurrencyNames.EUR.toString());
         }
     }
 
