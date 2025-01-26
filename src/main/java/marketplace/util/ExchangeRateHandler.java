@@ -29,7 +29,7 @@ public class ExchangeRateHandler {
     @Value("${app.exchange.url-get-currency}")
     private String currencyUrl;
 
-    public String getCurrentCurrency(String currencyName, HttpSession session) {
+    public String getAndUpdateCurrentCurrency(String currencyName, HttpSession session) {
         if (currencyName != null && !currencyName.isEmpty()) {
             currencyName = currencyName.toUpperCase();
             Map<String, Double> allCurrencies = readAllCurrenciesFromFile();

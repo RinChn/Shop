@@ -44,7 +44,7 @@ public class ConvertPricesToCurrencyAdvice implements ResponseBodyAdvice<Object>
                 .getRequestAttributes()).getRequest();
         String currencyName = httpServletRequest.getHeader("Currency");
         HttpSession session = httpServletRequest.getSession();
-        String currentCurrency = exchangeRateHandler.getCurrentCurrency(currencyName, session);
+        String currentCurrency = exchangeRateHandler.getAndUpdateCurrentCurrency(currencyName, session);
         log.info("Convert prices to {}", currentCurrency);
         ProductResponse product = (ProductResponse) body;
         BigDecimal exchangeRate = BigDecimal.valueOf(1.0);
