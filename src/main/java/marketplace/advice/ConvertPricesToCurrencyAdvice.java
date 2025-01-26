@@ -1,7 +1,6 @@
 package marketplace.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import marketplace.util.CurrencyNames;
 import marketplace.util.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
@@ -42,9 +41,9 @@ public class ConvertPricesToCurrencyAdvice implements ResponseBodyAdvice<Object>
                                   ServerHttpResponse response) {
         HttpServletRequest httpServletRequest = ((ServletRequestAttributes) RequestContextHolder
                 .getRequestAttributes()).getRequest();
-        String currencyName = httpServletRequest.getHeader("Currency");
-        HttpSession session = httpServletRequest.getSession();
-        String currentCurrency = exchangeRateHandler.getAndUpdateCurrentCurrency(currencyName, session);
+        String currentCurrency = httpServletRequest
+                                    .getSession()
+                                    .getAttribute("currency").toString();
         log.info("Convert prices to {}", currentCurrency);
         ProductResponse product = (ProductResponse) body;
         BigDecimal exchangeRate = BigDecimal.valueOf(1.0);
