@@ -3,7 +3,6 @@ package marketplace.util;
 import marketplace.dto.ProductRequestCreate;
 import marketplace.dto.ProductRequestUpdate;
 import marketplace.dto.ProductResponse;
-import marketplace.entity.Category;
 import marketplace.entity.Product;
 
 import java.math.BigDecimal;

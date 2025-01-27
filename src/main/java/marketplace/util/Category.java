@@ -1,4 +1,4 @@
-package marketplace.entity;
+package marketplace.util;
 
 public enum Category {
     CLOTHES,

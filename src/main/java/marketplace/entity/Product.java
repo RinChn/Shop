@@ -2,6 +2,7 @@ package marketplace.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import marketplace.util.Category;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;

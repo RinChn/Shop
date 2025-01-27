@@ -1,7 +1,7 @@
 package marketplace.dto;
 
 import lombok.Setter;
-import marketplace.entity.Category;
+import marketplace.util.Category;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
