@@ -1,7 +1,7 @@
 --liquibase formatted sql
---changeset morik:2
+--changeset morik:1
 
-CREATE TABLE product
+CREATE TABLE products
 (
     id UUID NOT NULL default gen_random_uuid(),
     article INTEGER NOT NULL UNIQUE,

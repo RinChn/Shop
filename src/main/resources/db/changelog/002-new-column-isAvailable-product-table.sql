@@ -1,4 +1,4 @@
 --liquibase formatted sql
---changeset morik:3
+--changeset morik:2
 
-ALTER TABLE product ADD is_available BOOLEAN NOT NULL DEFAULT TRUE;
+ALTER TABLE products ADD is_available BOOLEAN NOT NULL DEFAULT TRUE;
