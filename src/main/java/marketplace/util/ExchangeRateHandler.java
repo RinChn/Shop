@@ -25,29 +25,42 @@ public class ExchangeRateHandler {
     private String filePath;
     @Value("${app.exchange.url}")
     private String exchangeServiceUrl;
-
-    public BigDecimal getUsdExchangeRateFromFile() {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, Double> exchangeRate;
-        try {
-            exchangeRate = mapper.readValue(new File(filePath), Map.class);
-        } catch (IOException exception) {
-            log.error("Error reading file");
-            throw new ApplicationException(ErrorType.INVALID_EXCHANGE_RATE_FILE);
-        }
-        log.info("Successfully exchange rate from file");
-        return BigDecimal.valueOf(exchangeRate.get("USD"));
-    }
+    @Value("${app.exchange.url-get-currency}")
+    private String currencyUrl;
 
     @Cacheable(value = "exchangeCache", key = "'usd'")
     public BigDecimal getUsdFromService() {
         try {
             log.info("Successfully fetching USD exchange rate from service");
-            return restTemplate.getForObject(exchangeServiceUrl + "/api/v2/exchange/usd",
+            return restTemplate.getForObject(exchangeServiceUrl  + currencyUrl + "/usd",
                     BigDecimal.class);
         } catch (RestClientException e) {
             log.warn("Failed to fetch USD exchange rate from service.");
-            return getUsdExchangeRateFromFile();
+            return getExchangeRateFromFile(CurrencyNames.USD.toString());
         }
+    }
+
+    @Cacheable(value = "exchangeCache", key = "'eur'")
+    public BigDecimal getEurFromService() {
+        try {
+            log.info("Successfully fetching EUR exchange rate from service");
+            return restTemplate.getForObject(exchangeServiceUrl + currencyUrl + "/eur",
+                    BigDecimal.class);
+        } catch (RestClientException e) {
+            log.warn("Failed to fetch EUR exchange rate from service.");
+            return getExchangeRateFromFile(CurrencyNames.EUR.toString());
+        }
+    }
+
+    public BigDecimal getExchangeRateFromFile(String currencyName) {
+        Map<String, Double> exchangeRate;
+        try {
+            exchangeRate = new ObjectMapper().readValue(new File(filePath), Map.class);
+        } catch (IOException exception) {
+            log.error("Error reading file");
+            throw new ApplicationException(ErrorType.INVALID_EXCHANGE_RATE_FILE);
+        }
+        log.info("Successfully exchange rate from file");
+        return BigDecimal.valueOf(exchangeRate.get(currencyName));
     }
 }
