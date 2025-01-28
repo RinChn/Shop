@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorType {
     NONEXISTENT_ARTICLE("There is no product with this article."),
+    UNREGISTERED_MAIL("The user with this email has not been registered yet"),
     DUPLICATE("Duplicate article."),
     ERROR_FILE_SAVED("Failed to save workbook to file"),
     INVALID_FILE_CONTENT("Couldn't convert file contents to save"),
