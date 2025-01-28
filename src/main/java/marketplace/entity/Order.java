@@ -27,6 +27,7 @@ public class Order {
     @Column(name = "price", columnDefinition = "integer default 0")
             @Builder.Default
     BigDecimal price = BigDecimal.ZERO;
-    @Column(name = "status")
-    OrderStatus status;
+    @Column(name = "status", columnDefinition = "varchar(255) default 'CREATED'")
+            @Builder.Default
+    OrderStatus status = OrderStatus.CREATED;
 }
