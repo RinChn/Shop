@@ -10,5 +10,5 @@ import lombok.*;
 @NoArgsConstructor
 public class OrderRequestCreate {
     @NotBlank(message = "The email cannot be empty")
-    String email_customer;
+    String emailCustomer;
 }
