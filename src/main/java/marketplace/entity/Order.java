@@ -19,9 +19,11 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     UUID id;
+    @Column(name = "number", nullable = false)
+    Integer number;
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    User userId;
+    @JoinColumn(name = "customer_id", nullable = false)
+    User customer;
     @Column(name = "price", columnDefinition = "integer default 0")
             @Builder.Default
     BigDecimal price = BigDecimal.ZERO;
