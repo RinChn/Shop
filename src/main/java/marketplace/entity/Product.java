@@ -3,6 +3,7 @@ package marketplace.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import marketplace.util.Category;
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
@@ -33,6 +34,7 @@ public class Product {
     @Column(name = "price", nullable = false)
     BigDecimal price;
     @Column(name = "quantity", columnDefinition = "integer default 0")
+    @Check(constraints = "quantity >= 0")
     @Builder.Default
     Integer quantity = 0;
     @Column(name = "date_last_changes_quantity", columnDefinition = "timestamp default CURRENT_TIMESTAMP")
