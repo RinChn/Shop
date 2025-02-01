@@ -112,6 +112,14 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
-
+    public Product bookProduct(Integer productArticle, Integer quantity) {
+        Product product = productRepository.findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        if (productRepository.bookProduct(product.getId(), quantity) == 0)
+            throw new ApplicationException(ErrorType.NOT_ENOUGH_PRODUCTS);
+        productRepository.save(product);
+        log.info("Booked {} products with article {}", quantity, product.getArticle());
+        return product;
+    }
 
 }

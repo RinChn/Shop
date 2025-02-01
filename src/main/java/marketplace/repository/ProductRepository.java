@@ -3,6 +3,7 @@ package marketplace.repository;
 import jakarta.persistence.LockModeType;
 import marketplace.entity.Product;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -28,4 +29,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
             "AND (:isAvailable IS NULL OR p.isAvailable = :isAvailable)")
     List<Product> searchUsingFilter(@Param("name") String name, @Param("quantity") Integer quantity,
                                     @Param("price") BigDecimal price, @Param("isAvailable") Boolean isAvailable);
+
+    @Modifying
+    @Query("UPDATE Product p SET p.quantity = p.quantity - :quantity WHERE p.id = :uuid AND p.quantity >= :quantity")
+    Integer bookProduct(@Param("uuid") UUID uuid, @Param("quantity") Integer quantity);
 }
