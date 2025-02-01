@@ -8,6 +8,7 @@ import marketplace.util.OrderStatus;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderRequestUpdate {
+public class OrderRequestSetStatus {
+    Integer orderNumber;
     OrderStatus status;
 }
