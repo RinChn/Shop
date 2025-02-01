@@ -25,9 +25,10 @@ public class Order {
     @JoinColumn(name = "customer_id", nullable = false)
     User customer;
     @Column(name = "price", columnDefinition = "integer default 0")
-            @Builder.Default
+    @Builder.Default
     BigDecimal price = BigDecimal.ZERO;
     @Column(name = "status", columnDefinition = "varchar(255) default 'CREATED'")
-            @Builder.Default
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
     OrderStatus status = OrderStatus.CREATED;
 }
