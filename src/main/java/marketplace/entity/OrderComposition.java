@@ -3,6 +3,8 @@ package marketplace.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "order_compositions")
 @Getter
@@ -21,5 +23,9 @@ public class OrderComposition {
     @MapsId("productId")
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
-
+    @Column(name = "product_quantity", columnDefinition = "integer default 1")
+            @Builder.Default
+    Integer productQuantity = 1;
+    @Column(name = "price")
+    BigDecimal price;
 }
