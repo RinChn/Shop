@@ -3,9 +3,7 @@ package marketplace.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -14,6 +12,8 @@ import java.util.UUID;
 @NoArgsConstructor
 @Setter
 @Getter
+@Builder
+@AllArgsConstructor
 public class OrderCompositionId implements Serializable {
     @Column(name = "order_id")
     UUID orderId;
