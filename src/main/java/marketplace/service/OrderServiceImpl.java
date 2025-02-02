@@ -172,6 +172,7 @@ public class OrderServiceImpl implements OrderService {
             totalPriceProductDeleting = productPrice
                     .multiply(BigDecimal.valueOf(currentProductQuantityInOrder));
             log.info("This product is no longer in the order.");
+            product.setQuantity(product.getQuantity() + currentProductQuantityInOrder);
         } else {
             orderComposition.setProductQuantity(currentProductQuantityInOrder - quantityProductDeleting);
             totalPriceProductDeleting = productPrice.multiply(BigDecimal.valueOf(quantityProductDeleting));
@@ -181,11 +182,14 @@ public class OrderServiceImpl implements OrderService {
                     orderComposition.getProductQuantity(),
                     product.getArticle(),
                     orderComposition.getPrice());
+            product.setQuantity(product.getQuantity() + quantityProductDeleting);
         }
 
         order.setPrice(order.getPrice().subtract(totalPriceProductDeleting));
         orderRepository.save(order);
         log.info("New order price: {}", order.getPrice());
+
+        productRepository.save(product);
 
         return conversionService.convert(order, OrderResponse.class);
     }
