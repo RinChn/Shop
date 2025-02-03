@@ -14,8 +14,8 @@ import java.util.UUID;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, UUID> {
-    @Query("SELECT COUNT(*) AS order_count FROM Order o WHERE o.customer = :customer")
-    Long getNumberOfUserOrders(@Param("customer") User customer);
+    @Query("SELECT MAX(o.number) AS max_number FROM Order o WHERE o.customer = :customer")
+    Long getLastNumberOfUserOrders(@Param("customer") User customer);
 
     @Query("SELECT o FROM Order o WHERE o.customer = :customer AND o.status = :status")
     Optional<Order> findOrderOfCustomerByStatus(@Param("customer") User customer, @Param("status") OrderStatus status);
