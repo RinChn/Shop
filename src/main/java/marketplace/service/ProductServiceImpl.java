@@ -1,10 +1,10 @@
 package marketplace.service;
 
 import marketplace.aspect.Timer;
-import marketplace.dto.Filter;
-import marketplace.dto.ProductRequestUpdate;
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductResponse;
+import marketplace.dto.SearchFilter;
+import marketplace.controller.request.ProductRequestUpdate;
+import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.response.ProductResponse;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -103,9 +103,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Timer
     @Transactional(readOnly = true)
-    public List<ProductResponse> searchProducts(Filter filter) {
-        List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
-                filter.getPrice(), filter.getIsAvailable());
+    public List<ProductResponse> searchProducts(SearchFilter searchFilter) {
+        List<Product> foundProducts = productRepository.searchUsingFilter(searchFilter.getName(), searchFilter.getQuantity(),
+                searchFilter.getPrice(), searchFilter.getIsAvailable());
         FileHandler.AddingListOfProductsToExcel(foundProducts);
         return foundProducts.stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))

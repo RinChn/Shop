@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Filter {
+public class SearchFilter {
     private String name;
     private Integer quantity;
     private BigDecimal price;

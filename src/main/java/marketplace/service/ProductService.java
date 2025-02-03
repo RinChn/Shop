@@ -1,9 +1,9 @@
 package marketplace.service;
 
-import marketplace.dto.Filter;
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductRequestUpdate;
-import marketplace.dto.ProductResponse;
+import marketplace.dto.SearchFilter;
+import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.request.ProductRequestUpdate;
+import marketplace.controller.response.ProductResponse;
 
 import java.util.List;
 import java.util.UUID;
@@ -15,6 +15,6 @@ public interface ProductService {
     UUID deleteProduct(Integer productArticle);
     ProductResponse getProduct(Integer productArticle);
     List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize);
-    List<ProductResponse> searchProducts(Filter filter);
+    List<ProductResponse> searchProducts(SearchFilter searchFilter);
 
 }
