@@ -2,7 +2,10 @@ package marketplace.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import marketplace.dto.*;
+import marketplace.controller.request.OrderCompositionRequest;
+import marketplace.controller.request.OrderRequestSetStatus;
+import marketplace.controller.response.OrderCompositionResponse;
+import marketplace.controller.response.OrderResponse;
 import marketplace.service.OrderServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +21,14 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     @PostMapping
-    public OrderResponse addProductToOrder(@RequestBody OrderCompositionRequest orderCompositionRequest) {
-        return orderService.addToOrder(orderCompositionRequest);
+    public OrderResponse createOrder(@RequestBody OrderCompositionRequest orderCompositionRequest) {
+        return orderService.createOrder(orderCompositionRequest);
+    }
+
+    @PostMapping("/{number}")
+    public OrderResponse addProductToOrder(@PathVariable("number") Integer number,
+            @RequestBody OrderCompositionRequest orderCompositionRequest) {
+        return orderService.addToOrder(number, orderCompositionRequest);
     }
 
     @PutMapping
