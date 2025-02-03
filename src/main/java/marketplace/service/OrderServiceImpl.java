@@ -3,7 +3,10 @@ package marketplace.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.aspect.Timer;
-import marketplace.dto.*;
+import marketplace.controller.request.OrderCompositionRequest;
+import marketplace.controller.request.OrderRequestSetStatus;
+import marketplace.controller.response.OrderCompositionResponse;
+import marketplace.controller.response.OrderResponse;
 import marketplace.entity.*;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
@@ -19,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -39,17 +41,42 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     @Timer
-    public OrderResponse addToOrder(OrderCompositionRequest source) {
+    public OrderResponse createOrder(OrderCompositionRequest source) {
+        User customer = userHandler.getCurrentUser();
+        Product product = productService.bookProduct(source.getProductArticle(), source.getProductQuantity());
+        BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(source.getProductQuantity()));
+        Order order = Order.builder()
+                .number(orderRepository.getLastNumberOfUserOrders(customer).intValue() + 1)
+                .price(totalPrice)
+                .customer(customer)
+                .build();
+        orderRepository.save(order);
+        OrderCompositionId orderCompositionId = OrderCompositionId.builder()
+                .orderId(order.getId())
+                .productId(product.getId())
+                .build();
+        OrderComposition orderComposition = OrderComposition
+                .builder()
+                .id(orderCompositionId)
+                .order(order)
+                .product(product)
+                .price(totalPrice)
+                .productQuantity(source.getProductQuantity())
+                .build();
+        orderCompositionRepository.save(orderComposition);
+        return conversionService.convert(order, OrderResponse.class);
+    }
+
+    @Override
+    @Transactional
+    @Timer
+    public OrderResponse addToOrder(Integer number, OrderCompositionRequest source) {
         Integer quantity = source.getProductQuantity();
 
         User customer = userHandler.getCurrentUser();
 
-        Order order = orderRepository
-                .findOrderOfCustomerByStatus(customer, OrderStatus.CREATED)
-                .orElse(Order.builder()
-                        .customer(customer)
-                        .number(orderRepository.getNumberOfUserOrders(customer).intValue() + 1)
-                        .build());
+        Order order = orderRepository.findOrderByNumber(number, customer)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
         Product product = productService.bookProduct(source.getProductArticle(), quantity);
 
         OrderCompositionId orderCompositionId = OrderCompositionId.builder()
