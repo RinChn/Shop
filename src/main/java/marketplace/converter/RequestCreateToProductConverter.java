@@ -1,6 +1,6 @@
 package marketplace.converter;
 
-import marketplace.dto.ProductRequestCreate;
+import marketplace.controller.request.ProductRequestCreate;
 import marketplace.entity.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package marketplace.dto;
+package marketplace.controller.response;
 
 import lombok.Setter;
 import marketplace.util.Category;

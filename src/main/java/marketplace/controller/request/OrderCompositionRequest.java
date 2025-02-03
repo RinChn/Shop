@@ -1,4 +1,4 @@
-package marketplace.dto;
+package marketplace.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -12,7 +12,6 @@ import lombok.*;
 public class OrderCompositionRequest {
     @NotNull(message = "The article cannot be empty")
     private Integer productArticle;
-    @Builder.Default
     @Positive(message = "The quantity cannot be negative or zero")
-    private Integer productQuantity = 1;
+    private Integer productQuantity;
 }

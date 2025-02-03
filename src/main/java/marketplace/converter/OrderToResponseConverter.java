@@ -1,6 +1,6 @@
 package marketplace.converter;
 
-import marketplace.dto.OrderResponse;
+import marketplace.controller.response.OrderResponse;
 import marketplace.entity.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package marketplace.dto;
+package marketplace.controller.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

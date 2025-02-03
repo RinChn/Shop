@@ -1,6 +1,6 @@
 package marketplace.service;
 
-import marketplace.dto.ProductResponse;
+import marketplace.controller.response.ProductResponse;
 import marketplace.entity.Product;
 import marketplace.exception.ApplicationException;
 import marketplace.repository.ProductRepository;

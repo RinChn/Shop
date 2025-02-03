@@ -1,7 +1,7 @@
 package marketplace.util;
 
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductRequestUpdate;
+import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.request.ProductRequestUpdate;
 
 import java.math.BigDecimal;
 

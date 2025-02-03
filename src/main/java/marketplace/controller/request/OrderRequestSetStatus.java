@@ -1,4 +1,4 @@
-package marketplace.dto;
+package marketplace.controller.request;
 
 import lombok.*;
 import marketplace.util.OrderStatus;

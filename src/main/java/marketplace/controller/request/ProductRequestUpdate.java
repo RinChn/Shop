@@ -1,4 +1,4 @@
-package marketplace.dto;
+package marketplace.controller.request;
 
 import jakarta.validation.constraints.PositiveOrZero;
 import marketplace.util.Category;

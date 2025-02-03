@@ -3,7 +3,7 @@ package marketplace.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.aspect.Timer;
-import marketplace.dto.OrderResponse;
+import marketplace.controller.response.OrderResponse;
 import marketplace.dto.UserAndOrdersDto;
 import marketplace.dto.UserDto;
 import marketplace.entity.Order;
