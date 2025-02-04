@@ -9,6 +9,9 @@ public enum ErrorType {
     NOT_ENOUGH_PRODUCTS("There is not enough product in the warehouse"),
     UNIDENTIFIED_USER("First, log in to your account"),
     NONEXISTEN_ORDER("There is no order with this number in your profile."),
+    SET_STATUS_FOR_CANCELLED_ORDER("You cannot change the status of a cancelled order, select another one."),
+    SET_NOT_CREATED_ORDER("You can only change an order with the CREATED status. " +
+            "Request a status change or select another order."),
     OPEN_ORDER_ALREADY_EXISTS("There is already an open order in your profile, cancel or complete it first"),
     NONEXISTENT_PRODUCT_IN_ORDER("There is no such product in this order."),
     DUPLICATE("Duplicate"),
