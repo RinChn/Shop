@@ -122,4 +122,13 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    public void returnOfProductsToWarehouse(Map<Product, Integer> products) {
+        Product product;
+        for (Map.Entry<Product, Integer> entry : products.entrySet()) {
+            product = entry.getKey();
+            product.setQuantity(product.getQuantity() + entry.getValue());
+        }
+        productRepository.saveAll(new ArrayList<>(products.keySet()));
+    }
+
 }
