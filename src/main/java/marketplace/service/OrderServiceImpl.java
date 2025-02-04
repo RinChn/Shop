@@ -123,6 +123,13 @@ public class OrderServiceImpl implements OrderService {
         Order order = changingOrderAspect.getOrderFromContext();
         order.setStatus(request.getStatus());
         orderRepository.save(order);
+        if (request.getStatus().equals(OrderStatus.CANCELLED)) {
+            List<OrderComposition> allOrdersComposition = orderCompositionRepository.findCompositionsOfOrder(order);
+            productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
+                    .collect(Collectors.toMap(
+                            OrderComposition::getProduct,
+                            OrderComposition::getProductQuantity)));
+        }
         log.info("New order {} status: {}", order.getId(), order.getStatus());
         return conversionService.convert(order, OrderResponse.class);
     }
@@ -133,7 +140,12 @@ public class OrderServiceImpl implements OrderService {
     public UUID deleteOrder(Integer orderNumber) {
         Order order = orderRepository.findOrderByNumber(orderNumber, userHandler.getCurrentUser())
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
-        orderCompositionRepository.deleteAll(orderCompositionRepository.findCompositionsOfOrder(order));
+        List<OrderComposition> allOrdersComposition = orderCompositionRepository.findCompositionsOfOrder(order);
+        productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
+                .collect(Collectors.toMap(
+                        OrderComposition::getProduct,
+                        OrderComposition::getProductQuantity)));
+        orderCompositionRepository.deleteAll(allOrdersComposition);
         orderRepository.delete(order);
         log.info("Order {} deleted", orderNumber);
         return order.getId();
