@@ -1,5 +1,6 @@
 package marketplace.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.controller.request.OrderCompositionRequest;
@@ -21,7 +22,7 @@ public class OrderController {
     private final OrderServiceImpl orderService;
 
     @PostMapping
-    public OrderResponse createOrder(@RequestBody OrderCompositionRequest orderCompositionRequest) {
+    public OrderResponse createOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest) {
         return orderService.createOrder(orderCompositionRequest);
     }
 
@@ -52,9 +53,9 @@ public class OrderController {
     }
 
     @DeleteMapping("/{number}/product")
-    public OrderResponse removeProductsFromOrder(@RequestBody OrderCompositionRequest orderCompositionRequest,
+    public OrderResponse removeProductsFromOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest,
                                                  @PathVariable("number") Integer orderNumber) {
-        return orderService.removeProductsFromOrder(orderCompositionRequest, orderNumber);
+        return orderService.removeProductsFromOrder(orderNumber, orderCompositionRequest);
     }
 
 }
