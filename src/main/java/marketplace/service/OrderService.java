@@ -14,6 +14,6 @@ public interface OrderService {
     UUID deleteOrder(Integer orderNumber);
     List<OrderResponse> getAllOrdersOfUser();
     List<OrderCompositionResponse> getTheOrderDetails(Integer orderNumber);
-    OrderResponse removeProductsFromOrder(OrderCompositionRequest source, Integer orderNumber);
+    OrderResponse removeProductsFromOrder(Integer orderNumber, OrderCompositionRequest source);
     OrderResponse createOrder(OrderCompositionRequest source);
 }
