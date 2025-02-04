@@ -2,6 +2,8 @@ package marketplace.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import marketplace.aspect.ChangingOrder;
+import marketplace.aspect.ChangingOrderAspect;
 import marketplace.aspect.Timer;
 import marketplace.controller.request.OrderCompositionRequest;
 import marketplace.controller.request.OrderRequestSetStatus;
@@ -36,7 +38,8 @@ public class OrderServiceImpl implements OrderService {
     private final ProductServiceImpl productService;
     private final OrderCompositionRepository orderCompositionRepository;
     private final ConversionService conversionService;
-    public final UserHandler userHandler;
+    private final UserHandler userHandler;
+    private final ChangingOrderAspect changingOrderAspect;
 
     @Override
     @Transactional
@@ -70,13 +73,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     @Timer
+    @ChangingOrder
     public OrderResponse addToOrder(Integer number, OrderCompositionRequest source) {
+        Order order = changingOrderAspect.getOrderFromContext();
         Integer quantity = source.getProductQuantity();
-
-        User customer = userHandler.getCurrentUser();
-
-        Order order = orderRepository.findOrderByNumber(number, customer)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
         Product product = productService.bookProduct(source.getProductArticle(), quantity);
 
         OrderCompositionId orderCompositionId = OrderCompositionId.builder()
@@ -118,15 +118,9 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Timer
     @Override
+    @ChangingOrder
     public OrderResponse setStatus(OrderRequestSetStatus request) {
-        User customer = userHandler.getCurrentUser();
-        Order order = orderRepository.findOrderByNumber(request.getOrderNumber(), customer)
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
-        if (request.getStatus().equals(OrderStatus.CREATED) && orderRepository
-                .findOrderOfCustomerByStatus(customer, OrderStatus.CREATED).isPresent()) {
-            log.error("Open order already exists");
-            throw new ApplicationException(ErrorType.OPEN_ORDER_ALREADY_EXISTS);
-        }
+        Order order = changingOrderAspect.getOrderFromContext();
         order.setStatus(request.getStatus());
         orderRepository.save(order);
         log.info("New order {} status: {}", order.getId(), order.getStatus());
@@ -173,10 +167,9 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Timer
     @Override
-    public OrderResponse removeProductsFromOrder(OrderCompositionRequest source, Integer orderNumber) {
-
-        Order order = orderRepository.findOrderByNumber(orderNumber, userHandler.getCurrentUser())
-                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
+    @ChangingOrder
+    public OrderResponse removeProductsFromOrder(Integer orderNumber, OrderCompositionRequest source) {
+        Order order = changingOrderAspect.getOrderFromContext();
         Product product = productRepository.findByArticle(source.getProductArticle())
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
 
