@@ -1,7 +1,7 @@
-package marketplace.dto;
+package marketplace.controller.request;
 
 import jakarta.validation.constraints.PositiveOrZero;
-import marketplace.entity.Category;
+import marketplace.util.Category;
 import lombok.*;
 
 import java.math.BigDecimal;

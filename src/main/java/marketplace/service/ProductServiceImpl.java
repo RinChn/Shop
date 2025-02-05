@@ -1,10 +1,10 @@
 package marketplace.service;
 
 import marketplace.aspect.Timer;
-import marketplace.dto.Filter;
-import marketplace.dto.ProductRequestUpdate;
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductResponse;
+import marketplace.dto.SearchFilter;
+import marketplace.controller.request.ProductRequestUpdate;
+import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.response.ProductResponse;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
@@ -103,15 +103,32 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Timer
     @Transactional(readOnly = true)
-    public List<ProductResponse> searchProducts(Filter filter) {
-        List<Product> foundProducts = productRepository.searchUsingFilter(filter.getName(), filter.getQuantity(),
-                filter.getPrice(), filter.getIsAvailable());
+    public List<ProductResponse> searchProducts(SearchFilter searchFilter) {
+        List<Product> foundProducts = productRepository.searchUsingFilter(searchFilter.getName(), searchFilter.getQuantity(),
+                searchFilter.getPrice(), searchFilter.getIsAvailable());
         FileHandler.AddingListOfProductsToExcel(foundProducts);
         return foundProducts.stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
                 .toList();
     }
 
+    public Product bookProduct(Integer productArticle, Integer quantity) {
+        Product product = productRepository.findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        if (productRepository.bookProduct(product.getId(), quantity) == 0)
+            throw new ApplicationException(ErrorType.NOT_ENOUGH_PRODUCTS);
+        productRepository.save(product);
+        log.info("Booked {} products with article {}", quantity, product.getArticle());
+        return product;
+    }
 
+    public void returnOfProductsToWarehouse(Map<Product, Integer> products) {
+        Product product;
+        for (Map.Entry<Product, Integer> entry : products.entrySet()) {
+            product = entry.getKey();
+            product.setQuantity(product.getQuantity() + entry.getValue());
+        }
+        productRepository.saveAll(new ArrayList<>(products.keySet()));
+    }
 
 }

@@ -1,10 +1,10 @@
 package marketplace.controller;
 
 import jakarta.validation.Valid;
-import marketplace.dto.Filter;
-import marketplace.dto.ProductRequestUpdate;
-import marketplace.dto.ProductRequestCreate;
-import marketplace.dto.ProductResponse;
+import marketplace.dto.SearchFilter;
+import marketplace.controller.request.ProductRequestUpdate;
+import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.response.ProductResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -55,11 +55,11 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public List<ProductResponse> searchProducts(@RequestBody Filter filter) {
+    public List<ProductResponse> searchProducts(@RequestBody SearchFilter searchFilter) {
         log.info("A request from the controller to search for a product with the values: name = {}, price = {},\n" +
                         "quantity = {}, isAvailable = {}",
-        filter.getName(), filter.getPrice(), filter.getQuantity(), filter.getIsAvailable());
-        return productService.searchProducts(filter);
+        searchFilter.getName(), searchFilter.getPrice(), searchFilter.getQuantity(), searchFilter.getIsAvailable());
+        return productService.searchProducts(searchFilter);
     }
 
 }

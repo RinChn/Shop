@@ -6,14 +6,18 @@ spring:
     driver-class-name: org.postgresql.Driver
   jpa:
     database: postgresql
+    show-sql: true
+#    properties:
+#      hibernate:
+#        format_sql: true
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.yml
   cache:
-    cache-names: "exchangeCache"
+    cache-names: "exchangeCache,userLoginCache"
     caffeine:
       spec: maximumSize=1,expireAfterWrite=1m
 scheduler:
-  enabled: true
+  enabled: false
   period: PT30S
 app:
   file-names:

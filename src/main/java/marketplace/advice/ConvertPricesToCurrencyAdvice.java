@@ -5,7 +5,7 @@ import marketplace.util.CurrencyNames;
 import marketplace.util.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import marketplace.dto.ProductResponse;
+import marketplace.controller.response.ProductResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

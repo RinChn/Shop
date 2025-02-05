@@ -1,25 +1,22 @@
 package marketplace.converter;
 
-import marketplace.dto.ProductResponse;
+import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.entity.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductToDtoConverter implements Converter<Product, ProductResponse> {
-
+public class RequestUpdateToProductConverter implements Converter<ProductRequestUpdate, Product> {
     @Override
-    public ProductResponse convert(Product source) {
-        return  ProductResponse.builder()
+    public Product convert(ProductRequestUpdate source) {
+        return Product.builder()
                 .name(source.getName())
                 .description(source.getDescription())
+                .quantity(source.getQuantity())
                 .price(source.getPrice())
                 .categories(source.getCategories())
-                .quantity(source.getQuantity())
-                .dateOfLastChangesQuantity(source.getDateOfLastChangesQuantity())
-                .dateOfCreation(source.getDateOfCreation())
-                .article(source.getArticle())
                 .isAvailable(source.getIsAvailable())
                 .build();
+
     }
 }

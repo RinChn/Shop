@@ -3,3 +3,9 @@ databaseChangeLog:
       file: db/changelog/001-create-product-table.sql
   - include:
       file: db/changelog/002-new-column-isAvailable-product-table.sql
+  - include:
+      file: db/changelog/003-create-user-table.sql
+  - include:
+      file: db/changelog/004-create-order-table.sql
+  - include:
+      file: db/changelog/005-create-order-compositions-table.sql
