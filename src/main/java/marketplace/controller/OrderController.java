@@ -7,6 +7,7 @@ import marketplace.controller.request.OrderCompositionRequest;
 import marketplace.controller.request.OrderRequestSetStatus;
 import marketplace.controller.response.OrderCompositionResponse;
 import marketplace.controller.response.OrderResponse;
+import marketplace.dto.OrderAndDetailsDto;
 import marketplace.service.OrderServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,7 +44,7 @@ public class OrderController {
     }
 
     @GetMapping
-    public List<OrderResponse> getAllOrders() {
+    public List<OrderAndDetailsDto> getAllOrders() {
         return orderService.getAllOrdersOfUser();
     }
 

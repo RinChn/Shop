@@ -9,6 +9,8 @@ import marketplace.controller.request.OrderCompositionRequest;
 import marketplace.controller.request.OrderRequestSetStatus;
 import marketplace.controller.response.OrderCompositionResponse;
 import marketplace.controller.response.OrderResponse;
+import marketplace.dto.DetailedPartOfOrderDto;
+import marketplace.dto.OrderAndDetailsDto;
 import marketplace.entity.*;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -160,11 +163,22 @@ public class OrderServiceImpl implements OrderService {
     @Transactional(readOnly = true)
     @Timer
     @Override
-    public List<OrderResponse> getAllOrdersOfUser() {
-        return orderRepository.findAllOrdersOfCustomer(userHandler.getCurrentUser())
-                .stream()
-                .map(order -> conversionService.convert(order, OrderResponse.class))
-                .collect(Collectors.toList());
+    public List<OrderAndDetailsDto> getAllOrdersOfUser() {
+        List<Order> orders = orderRepository.findAllOrdersOfCustomer(userHandler.getCurrentUser());
+        List<OrderAndDetailsDto> orderAndDetailsDto = new ArrayList<>();
+        for (Order order : orders) {
+            List<DetailedPartOfOrderDto> allCompositions = orderCompositionRepository
+                    .findCompositionsOfOrder(order)
+                    .stream()
+                    .map(composition ->
+                            conversionService.convert(composition, DetailedPartOfOrderDto.class))
+                    .toList();
+            orderAndDetailsDto.add(OrderAndDetailsDto.builder()
+                    .order(conversionService.convert(order, OrderResponse.class))
+                    .components(allCompositions)
+                    .build());
+        }
+        return orderAndDetailsDto;
 
     }
 
