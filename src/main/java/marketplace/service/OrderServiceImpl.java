@@ -48,8 +48,12 @@ public class OrderServiceImpl implements OrderService {
         User customer = userHandler.getCurrentUser();
         Product product = productService.bookProduct(source.getProductArticle(), source.getProductQuantity());
         BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(source.getProductQuantity()));
+        Long lastNumber = orderRepository.getLastNumberOfUserOrders(customer);
+        if (lastNumber == null) {
+            lastNumber = 0L;
+        }
         Order order = Order.builder()
-                .number(orderRepository.getLastNumberOfUserOrders(customer).intValue() + 1)
+                .number(lastNumber.intValue() + 1)
                 .price(totalPrice)
                 .customer(customer)
                 .build();
