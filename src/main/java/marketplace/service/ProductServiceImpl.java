@@ -1,15 +1,18 @@
 package marketplace.service;
 
 import marketplace.aspect.Timer;
+import marketplace.controller.response.OrderResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.controller.request.ProductRequestCreate;
 import marketplace.controller.response.ProductResponse;
+import marketplace.entity.OrderComposition;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import marketplace.repository.OrderCompositionRepository;
 import marketplace.util.FileHandler;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,6 +31,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ConversionService conversionService;
     private final ProductRepository productRepository;
+    private final OrderCompositionRepository orderCompositionRepository;
 
     @Override
     @Transactional
@@ -110,6 +115,19 @@ public class ProductServiceImpl implements ProductService {
         return foundProducts.stream()
                 .map(product -> conversionService.convert(product, ProductResponse.class))
                 .toList();
+    }
+
+    @Override
+    public Map<Integer, List<OrderResponse>> getAllOrderForEveryProduct() {
+        List<Product> products = productRepository.findAll();
+        return products.stream()
+                .collect(Collectors.toMap(
+                        Product::getArticle,
+                        product -> orderCompositionRepository.findCompositionsOfProduct(product)
+                                .stream().map(OrderComposition::getOrder)
+                                .map(order -> conversionService.convert(order, OrderResponse.class))
+                                .toList()
+                ));
     }
 
     public Product bookProduct(Integer productArticle, Integer quantity) {
