@@ -5,6 +5,7 @@ import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestCreate;
 import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.controller.response.ProductResponse;
+import marketplace.entity.Product;
 
 import java.util.List;
 import java.util.Map;
@@ -19,5 +20,8 @@ public interface ProductService {
     List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize);
     List<ProductResponse> searchProducts(SearchFilter searchFilter);
     Map<Integer, List<OrderResponse>> getAllOrderForEveryProduct();
+    List<OrderResponse> getOrdersForProduct(Integer productArticle);
+    Product bookProduct(Integer productArticle, Integer quantity);
+    void returnOfProductsToWarehouse(Map<Product, Integer> products);
 
 }

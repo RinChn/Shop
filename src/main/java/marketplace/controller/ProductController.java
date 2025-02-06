@@ -48,6 +48,11 @@ public class ProductController {
         return productService.getAllOrderForEveryProduct();
     }
 
+    @GetMapping("/orders/{article}")
+    public List<OrderResponse> getOrderForProduct(@PathVariable Integer article) {
+        return productService.getOrdersForProduct(article);
+    }
+
     @DeleteMapping("/{article}")
     public UUID deleteProduct(@PathVariable Integer article) {
         log.info("Request from the controller to delete the item with the article number {}", article);

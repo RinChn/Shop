@@ -117,6 +117,8 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    @Timer
     @Override
     public Map<Integer, List<OrderResponse>> getAllOrderForEveryProduct() {
         List<Product> products = productRepository.findAll();
@@ -130,6 +132,23 @@ public class ProductServiceImpl implements ProductService {
                 ));
     }
 
+    @Transactional(readOnly = true)
+    @Timer
+    @Override
+    public List<OrderResponse> getOrdersForProduct(Integer productArticle) {
+        Product product = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        return orderCompositionRepository.findCompositionsOfProduct(product)
+                .stream()
+                .map(OrderComposition::getOrder)
+                .map(order -> conversionService.convert(order, OrderResponse.class))
+                .toList();
+    }
+
+    @Transactional
+    @Timer
+    @Override
     public Product bookProduct(Integer productArticle, Integer quantity) {
         Product product = productRepository.findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
@@ -140,6 +159,9 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Transactional
+    @Timer
+    @Override
     public void returnOfProductsToWarehouse(Map<Product, Integer> products) {
         Product product;
         for (Map.Entry<Product, Integer> entry : products.entrySet()) {
