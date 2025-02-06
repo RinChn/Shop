@@ -9,7 +9,7 @@ import marketplace.controller.request.OrderCompositionRequest;
 import marketplace.controller.request.OrderRequestSetStatus;
 import marketplace.controller.response.OrderCompositionResponse;
 import marketplace.controller.response.OrderResponse;
-import marketplace.dto.DetailedPartOfOrderDto;
+import marketplace.dto.ComponentOfOrderDto;
 import marketplace.dto.OrderAndDetailsDto;
 import marketplace.entity.*;
 import marketplace.exception.ApplicationException;
@@ -167,11 +167,11 @@ public class OrderServiceImpl implements OrderService {
         List<Order> orders = orderRepository.findAllOrdersOfCustomer(userHandler.getCurrentUser());
         List<OrderAndDetailsDto> orderAndDetailsDto = new ArrayList<>();
         for (Order order : orders) {
-            List<DetailedPartOfOrderDto> allCompositions = orderCompositionRepository
+            List<ComponentOfOrderDto> allCompositions = orderCompositionRepository
                     .findCompositionsOfOrder(order)
                     .stream()
                     .map(composition ->
-                            conversionService.convert(composition, DetailedPartOfOrderDto.class))
+                            conversionService.convert(composition, ComponentOfOrderDto.class))
                     .toList();
             orderAndDetailsDto.add(OrderAndDetailsDto.builder()
                     .order(conversionService.convert(order, OrderResponse.class))

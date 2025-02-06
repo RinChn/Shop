@@ -14,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderAndDetailsDto {
     OrderResponse order;
-    List<DetailedPartOfOrderDto> components;
+    List<ComponentOfOrderDto> components;
 }

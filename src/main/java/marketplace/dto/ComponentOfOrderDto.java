@@ -13,7 +13,7 @@ import marketplace.util.Category;
 @Setter
 @Builder
 @AllArgsConstructor
-public class DetailedPartOfOrderDto {
+public class ComponentOfOrderDto {
     Integer article;
     String name;
     String description;
