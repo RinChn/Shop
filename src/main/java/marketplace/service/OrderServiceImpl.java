@@ -145,10 +145,12 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findOrderByNumber(orderNumber, userHandler.getCurrentUser())
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
         List<OrderComposition> allOrdersComposition = orderCompositionRepository.findCompositionsOfOrder(order);
-        productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
-                .collect(Collectors.toMap(
-                        OrderComposition::getProduct,
-                        OrderComposition::getProductQuantity)));
+        if (!order.getStatus().equals(OrderStatus.CANCELLED)) {
+            productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
+                    .collect(Collectors.toMap(
+                            OrderComposition::getProduct,
+                            OrderComposition::getProductQuantity)));
+        }
         orderCompositionRepository.deleteAll(allOrdersComposition);
         orderRepository.delete(order);
         log.info("Order {} deleted", orderNumber);
