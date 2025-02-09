@@ -14,7 +14,7 @@ public class OrderToResponseConverter implements Converter<Order, OrderResponse>
                 .number(source.getNumber())
                 .price(source.getPrice())
                 .status(source.getStatus())
-                .email_customer(source.getCustomer().getEmail())
+                .emailCustomer(source.getCustomer().getEmail())
                 .build();
     }
 }
