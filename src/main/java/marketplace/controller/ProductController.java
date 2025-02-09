@@ -1,6 +1,7 @@
 package marketplace.controller;
 
 import jakarta.validation.Valid;
+import marketplace.controller.response.OrderAndTinResponse;
 import marketplace.controller.response.OrderResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestUpdate;
@@ -44,12 +45,12 @@ public class ProductController {
     }
 
     @GetMapping("/orders")
-    public Map<Integer, List<OrderResponse>> getAllOrderForEveryProduct() {
+    public Map<Integer, List<OrderAndTinResponse>> getAllOrderForEveryProduct() {
         return productService.getAllOrderForEveryProduct();
     }
 
     @GetMapping("/orders/{article}")
-    public List<OrderResponse> getOrderForProduct(@PathVariable Integer article) {
+    public List<OrderAndTinResponse> getOrderForProduct(@PathVariable Integer article) {
         return productService.getOrdersForProduct(article);
     }
 

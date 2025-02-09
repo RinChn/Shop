@@ -1,5 +1,6 @@
 package marketplace.service;
 
+import marketplace.controller.response.OrderAndTinResponse;
 import marketplace.controller.response.OrderResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestCreate;
@@ -19,8 +20,8 @@ public interface ProductService {
     ProductResponse getProduct(Integer productArticle);
     List<ProductResponse> getAllProducts(Integer pageNumber, Integer pageSize);
     List<ProductResponse> searchProducts(SearchFilter searchFilter);
-    Map<Integer, List<OrderResponse>> getAllOrderForEveryProduct();
-    List<OrderResponse> getOrdersForProduct(Integer productArticle);
+    Map<Integer, List<OrderAndTinResponse>> getAllOrderForEveryProduct();
+    List<OrderAndTinResponse> getOrdersForProduct(Integer productArticle);
     Product bookProduct(Integer productArticle, Integer quantity);
     void returnOfProductsToWarehouse(Map<Product, Integer> products);
 
