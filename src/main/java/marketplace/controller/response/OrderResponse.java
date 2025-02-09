@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class OrderResponse {
     Integer number;
-    String email_customer;
+    String emailCustomer;
     BigDecimal price;
     OrderStatus status;
 }
