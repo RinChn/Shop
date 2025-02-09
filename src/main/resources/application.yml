@@ -25,3 +25,6 @@ app:
   exchange:
     url: "${EXCHANGE_SERVICE_URL:http://localhost:8081}"
     url-get-currency: "/api/v2/exchange"
+  tax:
+    url: "${TAX_SERVICE_URL:http://localhost:8082}"
+    url-get-tin: "/api/v3/users"
