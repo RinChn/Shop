@@ -61,6 +61,7 @@ public class OrderServiceImpl implements OrderService {
                 .customer(customer)
                 .build();
         orderRepository.save(order);
+        log.info("Order created {} for user {}", order.getNumber(), order.getCustomer().getEmail());
         OrderCompositionId orderCompositionId = OrderCompositionId.builder()
                 .orderId(order.getId())
                 .productId(product.getId())
@@ -74,6 +75,7 @@ public class OrderServiceImpl implements OrderService {
                 .productQuantity(source.getProductQuantity())
                 .build();
         orderCompositionRepository.save(orderComposition);
+        log.info("OrderComposition created: {}", orderComposition.getId());
         return conversionService.convert(order, OrderResponse.class);
     }
 
@@ -106,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
         BigDecimal productPriceInComposition = currentCompositionPrice
                 .divide(currentCompositionQuantity, 2, RoundingMode.HALF_UP);
         if (product.getPrice().compareTo(productPriceInComposition) != 0) {
-            log.info("Product price is not equal to product price in composition: {}", productPriceInComposition);
+            log.warn("Product price is not equal to product price in composition: {}", productPriceInComposition);
             totalPrice = productPriceInComposition.multiply(BigDecimal.valueOf(quantity));
             orderComposition.setPrice(currentCompositionPrice.add(totalPrice));
             orderComposition.setProductQuantity(quantity + orderComposition.getProductQuantity());
@@ -130,15 +132,21 @@ public class OrderServiceImpl implements OrderService {
         Order order = changingOrderAspect.getOrderFromContext();
         order.setStatus(request.getStatus());
         orderRepository.save(order);
+
         if (request.getStatus().equals(OrderStatus.CANCELLED)) {
-            List<OrderComposition> allOrdersComposition = orderCompositionRepository.findCompositionsOfOrder(order);
-            productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
-                    .collect(Collectors.toMap(
-                            OrderComposition::getProduct,
-                            OrderComposition::getProductQuantity)));
+            returnOfProducts(orderCompositionRepository.findCompositionsOfOrder(order));
         }
+
         log.info("New order {} status: {}", order.getId(), order.getStatus());
         return conversionService.convert(order, OrderResponse.class);
+    }
+
+    private void returnOfProducts(List<OrderComposition> ordersComposition) {
+        productService.returnOfProductsToWarehouse(ordersComposition.stream()
+                .collect(Collectors.toMap(
+                        OrderComposition::getProduct,
+                        OrderComposition::getProductQuantity)));
+        log.info("Products from order have been returned");
     }
 
     @Transactional
@@ -149,14 +157,11 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
         List<OrderComposition> allOrdersComposition = orderCompositionRepository.findCompositionsOfOrder(order);
         if (!order.getStatus().equals(OrderStatus.CANCELLED)) {
-            productService.returnOfProductsToWarehouse(allOrdersComposition.stream()
-                    .collect(Collectors.toMap(
-                            OrderComposition::getProduct,
-                            OrderComposition::getProductQuantity)));
+            returnOfProducts(allOrdersComposition);
         }
         orderCompositionRepository.deleteAll(allOrdersComposition);
         orderRepository.delete(order);
-        log.info("Order {} deleted", orderNumber);
+        log.info("Order {} deleted", order.getId());
         return order.getId();
     }
 
@@ -178,6 +183,7 @@ public class OrderServiceImpl implements OrderService {
                     .components(allCompositions)
                     .build());
         }
+        log.info("Information about {} orders was received", orderAndDetailsDto.size());
         return orderAndDetailsDto;
 
     }
@@ -188,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderCompositionResponse> getTheOrderDetails(Integer orderNumber) {
         Order order = orderRepository.findOrderByNumber(orderNumber, userHandler.getCurrentUser())
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
-        log.info("Order id: {}", order.getId());
+        log.info("Get info about order {}", order.getId());
         return orderCompositionRepository.findCompositionsOfOrder(order)
                 .stream()
                 .map(composition ->

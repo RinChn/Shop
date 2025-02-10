@@ -162,7 +162,6 @@ public class ProductServiceImpl implements ProductService {
                     })
             );
         }
-
         return allOrders;
 
     }
@@ -200,6 +199,7 @@ public class ProductServiceImpl implements ProductService {
                     }
             );
         }
+        log.info("Successfully get orders for product: {}", productArticle);
         return allOrders;
     }
 
@@ -224,6 +224,7 @@ public class ProductServiceImpl implements ProductService {
         for (Map.Entry<Product, Integer> entry : products.entrySet()) {
             product = entry.getKey();
             product.setQuantity(product.getQuantity() + entry.getValue());
+            log.info("Returned product {} with quantity {}", product, product.getQuantity());
         }
         productRepository.saveAll(new ArrayList<>(products.keySet()));
     }
