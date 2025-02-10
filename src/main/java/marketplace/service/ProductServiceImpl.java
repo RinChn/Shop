@@ -1,8 +1,8 @@
 package marketplace.service;
 
+import feign.FeignException;
 import marketplace.aspect.Timer;
 import marketplace.controller.response.OrderAndTinResponse;
-import marketplace.controller.response.OrderResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.controller.request.ProductRequestCreate;
@@ -13,9 +13,12 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import marketplace.exchange.ExchangeTaxHandler;
+import marketplace.exchange.TaxFeignClient;
 import marketplace.repository.OrderCompositionRepository;
 import marketplace.util.FileHandler;
 import marketplace.util.UserHandler;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -34,7 +37,7 @@ public class ProductServiceImpl implements ProductService {
     private final ConversionService conversionService;
     private final ProductRepository productRepository;
     private final OrderCompositionRepository orderCompositionRepository;
-    private final UserHandler userHandler;
+    private final ExchangeTaxHandler exchangeTaxHandler;
 
     @Override
     @Transactional
@@ -137,7 +140,8 @@ public class ProductServiceImpl implements ProductService {
                 .flatMap(List::stream)
                 .map(OrderAndTinResponse::getEmailCustomer)
                 .collect(Collectors.toSet());
-        List<String> tins = userHandler.getTinFromService(uniqueEmails.stream().toList());
+
+        List<String> tins = exchangeTaxHandler.getTins(uniqueEmails.stream().toList());
 
         if (!tins.isEmpty()) {
             Map<String, String> emailToTinMap = new HashMap<>();
@@ -178,7 +182,7 @@ public class ProductServiceImpl implements ProductService {
         Set<String> uniqueEmails = allOrders.stream()
                 .map(OrderAndTinResponse::getEmailCustomer)
                 .collect(Collectors.toSet());
-        List<String> tins = userHandler.getTinFromService(uniqueEmails.stream().toList());
+        List<String> tins = exchangeTaxHandler.getTins(uniqueEmails.stream().toList());
         if (!tins.isEmpty()) {
             Map<String, String> emailToTinMap = new HashMap<>();
             List<String> uniqueEmailList = new ArrayList<>(uniqueEmails);
