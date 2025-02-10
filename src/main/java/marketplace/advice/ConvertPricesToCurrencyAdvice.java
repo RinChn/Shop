@@ -2,7 +2,7 @@ package marketplace.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import marketplace.util.CurrencyNames;
-import marketplace.util.ExchangeRateHandler;
+import marketplace.exchange.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.controller.response.ProductResponse;

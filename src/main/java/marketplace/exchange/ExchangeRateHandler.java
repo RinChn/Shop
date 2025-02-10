@@ -1,9 +1,10 @@
-package marketplace.util;
+package marketplace.exchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import lombok.extern.slf4j.Slf4j;
+import marketplace.util.CurrencyNames;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -23,9 +24,9 @@ public class ExchangeRateHandler {
 
     @Value("${app.file-names.exchange-rate}")
     private String filePath;
-    @Value("${app.exchange.url}")
+    @Value("${app.currency.url}")
     private String exchangeServiceUrl;
-    @Value("${app.exchange.url-get-currency}")
+    @Value("${app.currency.url-get-currency}")
     private String currencyUrl;
 
     @Cacheable(value = "exchangeCache", key = "'usd'")
