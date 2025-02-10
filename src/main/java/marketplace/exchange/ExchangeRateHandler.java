@@ -1,15 +1,14 @@
 package marketplace.exchange;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import lombok.extern.slf4j.Slf4j;
-import marketplace.util.CurrencyNames;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,38 +17,22 @@ import java.util.Map;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class ExchangeRateHandler {
-
-    private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${app.file-names.exchange-rate}")
     private String filePath;
-    @Value("${app.currency.url}")
-    private String exchangeServiceUrl;
-    @Value("${app.currency.url-get-currency}")
-    private String currencyUrl;
+    private final RateFeignClient rateFeignClient;
 
-    @Cacheable(value = "exchangeCache", key = "'usd'")
-    public BigDecimal getUsdFromService() {
-        try {
-            log.info("Successfully fetching USD exchange rate from service");
-            return restTemplate.getForObject(exchangeServiceUrl  + currencyUrl + "/usd",
-                    BigDecimal.class);
-        } catch (RestClientException e) {
-            log.warn("Failed to fetch USD exchange rate from service.");
-            return getExchangeRateFromFile(CurrencyNames.USD.toString());
-        }
-    }
 
-    @Cacheable(value = "exchangeCache", key = "'eur'")
-    public BigDecimal getEurFromService() {
+    @Cacheable(value = "exchangeCache", key = "#currencyName")
+    public BigDecimal getRateFromService(String currencyName) {
         try {
-            log.info("Successfully fetching EUR exchange rate from service");
-            return restTemplate.getForObject(exchangeServiceUrl + currencyUrl + "/eur",
-                    BigDecimal.class);
+            log.info("Successfully fetching {} exchange rate from service", currencyName);
+            return rateFeignClient.getExchangeRate(currencyName.toLowerCase());
         } catch (RestClientException e) {
-            log.warn("Failed to fetch EUR exchange rate from service.");
-            return getExchangeRateFromFile(CurrencyNames.EUR.toString());
+            log.warn("Failed to fetch {} exchange rate from service.", currencyName);
+            return getExchangeRateFromFile(currencyName.toUpperCase());
         }
     }
 
