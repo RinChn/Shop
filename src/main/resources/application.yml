@@ -22,7 +22,7 @@ scheduler:
 app:
   file-names:
     exchange-rate: "src/main/resources/parameters/ExchangeRate.json"
-  exchange:
+  currency:
     url: "${EXCHANGE_SERVICE_URL:http://localhost:8081}"
     url-get-currency: "/api/v2/exchange"
   tax:
