@@ -1,9 +1,6 @@
 package marketplace.controller.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import marketplace.util.OrderStatus;
 
 import java.math.BigDecimal;
@@ -12,9 +9,11 @@ import java.math.BigDecimal;
 @Setter
 @Builder
 @AllArgsConstructor
-public class OrderResponse {
+@NoArgsConstructor
+public class OrderAndTinResponse {
     Integer number;
     String emailCustomer;
+    String tinCustomer;
     BigDecimal price;
     OrderStatus status;
 }

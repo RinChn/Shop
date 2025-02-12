@@ -14,6 +14,7 @@ import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @Aspect
@@ -25,6 +26,7 @@ public class ChangingOrderAspect {
     private final ThreadLocal<Order> orderContext = new ThreadLocal<>();
 
     @Before("@annotation(marketplace.aspect.ChangingOrder)")
+    @Transactional(readOnly = true)
     public void checkOrderStatus(JoinPoint joinPoint) {
         Object[] args = joinPoint.getArgs();
         Integer orderNumber = 0;

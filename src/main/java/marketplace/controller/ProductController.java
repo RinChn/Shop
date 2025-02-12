@@ -1,6 +1,8 @@
 package marketplace.controller;
 
 import jakarta.validation.Valid;
+import marketplace.controller.response.OrderAndTinResponse;
+import marketplace.controller.response.OrderResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.controller.request.ProductRequestCreate;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import marketplace.service.ProductServiceImpl;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -39,6 +42,16 @@ public class ProductController {
     public ProductResponse getProductByArticle(@PathVariable Integer article) {
         log.info("Request from the controller to receive an item with the article number {}", article);
         return productService.getProduct(article);
+    }
+
+    @GetMapping("/orders")
+    public Map<Integer, List<OrderAndTinResponse>> getAllOrderForEveryProduct() {
+        return productService.getAllOrderForEveryProduct();
+    }
+
+    @GetMapping("/orders/{article}")
+    public List<OrderAndTinResponse> getOrderForProduct(@PathVariable Integer article) {
+        return productService.getOrdersForProduct(article);
     }
 
     @DeleteMapping("/{article}")

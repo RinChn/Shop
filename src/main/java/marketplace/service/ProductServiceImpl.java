@@ -1,16 +1,24 @@
 package marketplace.service;
 
+import feign.FeignException;
 import marketplace.aspect.Timer;
+import marketplace.controller.response.OrderAndTinResponse;
 import marketplace.dto.SearchFilter;
 import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.controller.request.ProductRequestCreate;
 import marketplace.controller.response.ProductResponse;
+import marketplace.entity.OrderComposition;
 import marketplace.entity.Product;
 import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import marketplace.exchange.ExchangeTaxHandler;
+import marketplace.exchange.TaxFeignClient;
+import marketplace.repository.OrderCompositionRepository;
 import marketplace.util.FileHandler;
+import marketplace.util.UserHandler;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -19,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -27,6 +36,8 @@ public class ProductServiceImpl implements ProductService {
 
     private final ConversionService conversionService;
     private final ProductRepository productRepository;
+    private final OrderCompositionRepository orderCompositionRepository;
+    private final ExchangeTaxHandler exchangeTaxHandler;
 
     @Override
     @Transactional
@@ -112,6 +123,89 @@ public class ProductServiceImpl implements ProductService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
+    @Timer
+    @Override
+    public Map<Integer, List<OrderAndTinResponse>> getAllOrderForEveryProduct() {
+        List<Product> products = productRepository.findAll();
+        Map<Integer, List<OrderAndTinResponse>> allOrders = products.stream()
+                .collect(Collectors.toMap(
+                        Product::getArticle,
+                        product -> orderCompositionRepository.findCompositionsOfProduct(product)
+                                .stream().map(OrderComposition::getOrder)
+                                .map(order -> conversionService.convert(order, OrderAndTinResponse.class))
+                                .toList()
+                ));
+        Set<String> uniqueEmails = allOrders.values().stream()
+                .flatMap(List::stream)
+                .map(OrderAndTinResponse::getEmailCustomer)
+                .collect(Collectors.toSet());
+
+        List<String> tins = exchangeTaxHandler.getTins(uniqueEmails.stream().toList());
+
+        if (!tins.isEmpty()) {
+            Map<String, String> emailToTinMap = new HashMap<>();
+            List<String> uniqueEmailList = new ArrayList<>(uniqueEmails);
+            for (int i = 0; i < uniqueEmailList.size(); i++) {
+                emailToTinMap.put(uniqueEmailList.get(i), tins.get(i));
+            }
+            allOrders.values().forEach(orderList ->
+                    orderList.forEach(order -> {
+                        String email = order.getEmailCustomer();
+                        order.setTinCustomer(emailToTinMap.get(email));
+                    })
+            );
+        } else {
+            allOrders.values().forEach(orderList ->
+                    orderList.forEach(order -> {
+                        order.setTinCustomer("The tax service is unavailable");
+                    })
+            );
+        }
+        return allOrders;
+
+    }
+
+    @Transactional(readOnly = true)
+    @Timer
+    @Override
+    public List<OrderAndTinResponse> getOrdersForProduct(Integer productArticle) {
+        Product product = productRepository
+                .findByArticle(productArticle)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
+        List<OrderAndTinResponse> allOrders = orderCompositionRepository.findCompositionsOfProduct(product)
+                .stream()
+                .map(OrderComposition::getOrder)
+                .map(order -> conversionService.convert(order, OrderAndTinResponse.class))
+                .toList();
+        Set<String> uniqueEmails = allOrders.stream()
+                .map(OrderAndTinResponse::getEmailCustomer)
+                .collect(Collectors.toSet());
+        List<String> tins = exchangeTaxHandler.getTins(uniqueEmails.stream().toList());
+        if (!tins.isEmpty()) {
+            Map<String, String> emailToTinMap = new HashMap<>();
+            List<String> uniqueEmailList = new ArrayList<>(uniqueEmails);
+            for (int i = 0; i < uniqueEmailList.size(); i++) {
+                emailToTinMap.put(uniqueEmailList.get(i), tins.get(i));
+            }
+            allOrders.forEach(order -> {
+                        String email = order.getEmailCustomer();
+                        order.setTinCustomer(emailToTinMap.get(email));
+                    }
+            );
+        } else {
+            allOrders.forEach(order -> {
+                        order.setTinCustomer("The tax service is unavailable");
+                    }
+            );
+        }
+        log.info("Successfully get orders for product: {}", productArticle);
+        return allOrders;
+    }
+
+    @Transactional
+    @Timer
+    @Override
     public Product bookProduct(Integer productArticle, Integer quantity) {
         Product product = productRepository.findByArticle(productArticle)
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
@@ -122,11 +216,15 @@ public class ProductServiceImpl implements ProductService {
         return product;
     }
 
+    @Transactional
+    @Timer
+    @Override
     public void returnOfProductsToWarehouse(Map<Product, Integer> products) {
         Product product;
         for (Map.Entry<Product, Integer> entry : products.entrySet()) {
             product = entry.getKey();
             product.setQuantity(product.getQuantity() + entry.getValue());
+            log.info("Returned product {} with quantity {}", product, product.getQuantity());
         }
         productRepository.saveAll(new ArrayList<>(products.keySet()));
     }

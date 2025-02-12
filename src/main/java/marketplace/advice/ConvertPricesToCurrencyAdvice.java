@@ -2,7 +2,7 @@ package marketplace.advice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import marketplace.util.CurrencyNames;
-import marketplace.util.ExchangeRateHandler;
+import marketplace.exchange.ExchangeRateHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.controller.response.ProductResponse;
@@ -47,11 +47,10 @@ public class ConvertPricesToCurrencyAdvice implements ResponseBodyAdvice<Object>
         log.info("Convert prices to {}", currentCurrency);
         ProductResponse product = (ProductResponse) body;
         BigDecimal exchangeRate = BigDecimal.valueOf(1.0);
-        if (currentCurrency.equals(CurrencyNames.USD.toString())) {
-            exchangeRate = exchangeRateHandler.getUsdFromService();
-        } else if (currentCurrency.equals(CurrencyNames.EUR.toString())) {
-            exchangeRate = exchangeRateHandler.getEurFromService();
-        }
+        if (currentCurrency.equals(CurrencyNames.USD.toString())
+                || currentCurrency.equals(CurrencyNames.EUR.toString()))
+            exchangeRate = exchangeRateHandler.getRateFromService(currentCurrency);
+
         product.setPrice(product.getPrice()
                 .divide(exchangeRate, 2, RoundingMode.HALF_UP));
         return product;
