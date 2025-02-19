@@ -2,6 +2,9 @@ package marketplace.event;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import marketplace.event.type.CancelledOrderEvent;
+import marketplace.event.type.CreateOrderEvent;
+import marketplace.event.type.SetStatusOrderEvent;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
