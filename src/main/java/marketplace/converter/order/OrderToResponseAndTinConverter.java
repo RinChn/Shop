@@ -1,4 +1,4 @@
-package marketplace.converter;
+package marketplace.converter.order;
 
 import marketplace.controller.response.OrderAndTinResponse;
 import marketplace.entity.Order;

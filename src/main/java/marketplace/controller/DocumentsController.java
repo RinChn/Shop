@@ -2,7 +2,7 @@ package marketplace.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import marketplace.service.DocumentsServiceImpl;
+import marketplace.service.implementation.DocumentsServiceImpl;
 import marketplace.util.FileHandler;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;

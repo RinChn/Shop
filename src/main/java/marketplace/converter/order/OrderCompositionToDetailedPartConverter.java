@@ -1,4 +1,4 @@
-package marketplace.converter;
+package marketplace.converter.order;
 
 import marketplace.dto.ComponentOfOrderDto;
 import marketplace.entity.OrderComposition;

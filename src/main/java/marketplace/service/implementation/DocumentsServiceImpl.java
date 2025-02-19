@@ -1,9 +1,10 @@
-package marketplace.service;
+package marketplace.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
+import marketplace.service.DocumentsService;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;

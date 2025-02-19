@@ -1,4 +1,4 @@
-package marketplace.converter;
+package marketplace.converter.product;
 
 import marketplace.controller.response.ProductResponse;
 import marketplace.entity.Product;

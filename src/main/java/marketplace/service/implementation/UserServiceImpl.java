@@ -1,4 +1,4 @@
-package marketplace.service;
+package marketplace.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +12,7 @@ import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import marketplace.repository.OrderRepository;
 import marketplace.repository.UserRepository;
+import marketplace.service.UserService;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

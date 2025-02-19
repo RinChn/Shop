@@ -1,16 +1,15 @@
-package marketplace.converter;
+package marketplace.converter.product;
 
-import marketplace.controller.request.ProductRequestCreate;
+import marketplace.controller.request.ProductRequestUpdate;
 import marketplace.entity.Product;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RequestCreateToProductConverter implements Converter<ProductRequestCreate, Product> {
+public class RequestUpdateToProductConverter implements Converter<ProductRequestUpdate, Product> {
     @Override
-    public Product convert(ProductRequestCreate source) {
+    public Product convert(ProductRequestUpdate source) {
         return Product.builder()
-                .article(source.getArticle())
                 .name(source.getName())
                 .description(source.getDescription())
                 .quantity(source.getQuantity())

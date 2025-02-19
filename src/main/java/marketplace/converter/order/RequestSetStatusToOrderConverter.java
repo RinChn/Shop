@@ -1,4 +1,4 @@
-package marketplace.converter;
+package marketplace.converter.order;
 
 import marketplace.controller.request.OrderRequestSetStatus;
 import marketplace.entity.Order;
