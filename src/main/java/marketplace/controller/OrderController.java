@@ -8,7 +8,9 @@ import marketplace.controller.request.OrderRequestSetStatus;
 import marketplace.controller.response.OrderCompositionResponse;
 import marketplace.controller.response.OrderResponse;
 import marketplace.dto.OrderAndDetailsDto;
-import marketplace.service.OrderServiceImpl;
+import marketplace.event.EventSource;
+import marketplace.service.implementation.EventServiceImpl;
+import marketplace.service.implementation.OrderServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,7 @@ import java.util.UUID;
 public class OrderController {
 
     private final OrderServiceImpl orderService;
+    private final EventServiceImpl eventService;
 
     @PostMapping
     public OrderResponse createOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest) {
@@ -57,6 +60,11 @@ public class OrderController {
     public OrderResponse removeProductsFromOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest,
                                                  @PathVariable("number") Integer orderNumber) {
         return orderService.removeProductsFromOrder(orderNumber, orderCompositionRequest);
+    }
+
+    @PostMapping("/event")
+    public OrderResponse setStatus(@RequestBody EventSource eventSource) {
+        return eventService.recognizeEvent(eventSource);
     }
 
 }
