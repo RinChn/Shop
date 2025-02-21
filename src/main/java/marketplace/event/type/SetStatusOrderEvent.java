@@ -12,6 +12,7 @@ public class SetStatusOrderEvent implements EventSource {
     private final EventName event = EventName.ANY_STATUS_ORDER;
     private Integer orderNumber;
     private OrderStatus status;
+    private String emailConsumer;
 
     @Override
     public EventName getEvent() {

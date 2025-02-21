@@ -10,6 +10,7 @@ import marketplace.event.EventSource;
 public class CancelledOrderEvent implements EventSource {
     private final EventName event = EventName.CANCELLED_ORDER;
     private Integer orderNumber;
+    private String emailConsumer;
 
     @Override
     public EventName getEvent() {

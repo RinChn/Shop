@@ -11,6 +11,7 @@ public class CreateOrderEvent implements EventSource {
     private final EventName event = EventName.CREATE_ORDER;
     private Integer productArticle;
     private Integer productQuantity;
+    private String emailConsumer;
 
     @Override
     public EventName getEvent() {
