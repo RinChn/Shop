@@ -16,6 +16,13 @@ spring:
     cache-names: "exchangeCache,userLoginCache"
     caffeine:
       spec: maximumSize=1,expireAfterWrite=1m
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: event-group-double
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 scheduler:
   enabled: false
   period: PT30S
