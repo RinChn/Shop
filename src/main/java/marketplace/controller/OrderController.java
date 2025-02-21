@@ -27,7 +27,7 @@ public class OrderController {
 
     @PostMapping
     public OrderResponse createOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest) {
-        return orderService.createOrder(orderCompositionRequest);
+        return orderService.createOrder(orderCompositionRequest, null);
     }
 
     @PostMapping("/{number}")
@@ -38,7 +38,7 @@ public class OrderController {
 
     @PutMapping
     public OrderResponse setStatusToOrder(@RequestBody OrderRequestSetStatus orderRequestSetStatus) {
-        return orderService.setStatus(orderRequestSetStatus);
+        return orderService.setStatus(orderRequestSetStatus, null);
     }
 
     @DeleteMapping("/{number}")
