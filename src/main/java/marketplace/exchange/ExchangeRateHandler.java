@@ -30,7 +30,7 @@ public class ExchangeRateHandler {
         try {
             log.info("Successfully fetching {} exchange rate from service", currencyName);
             return rateFeignClient.getExchangeRate(currencyName.toLowerCase());
-        } catch (RestClientException e) {
+        } catch (Exception e) {
             log.warn("Failed to fetch {} exchange rate from service.", currencyName);
             return getExchangeRateFromFile(currencyName.toUpperCase());
         }
