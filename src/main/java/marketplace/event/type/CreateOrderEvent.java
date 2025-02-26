@@ -5,6 +5,8 @@ import lombok.Setter;
 import marketplace.event.EventName;
 import marketplace.event.EventSource;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 public class CreateOrderEvent implements EventSource {
@@ -12,6 +14,7 @@ public class CreateOrderEvent implements EventSource {
     private Integer productArticle;
     private Integer productQuantity;
     private String emailConsumer;
+    private UUID idempotencyKey;
 
     @Override
     public EventName getEvent() {

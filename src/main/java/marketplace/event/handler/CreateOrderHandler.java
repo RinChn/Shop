@@ -17,7 +17,8 @@ public class CreateOrderHandler implements EventHandler<CreateOrderEvent> {
 
     @Override
     public OrderResponse handle(CreateOrderEvent event) {
-        return orderService.createOrder(conversionService.convert(event, OrderCompositionRequest.class),
+        return orderService.createOrder(event.getIdempotencyKey(),
+                conversionService.convert(event, OrderCompositionRequest.class),
                 event.getEmailConsumer());
     }
 
