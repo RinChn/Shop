@@ -16,5 +16,5 @@ public interface OrderService {
     List<OrderAndDetailsDto> getAllOrdersOfUser();
     List<OrderCompositionResponse> getTheOrderDetails(Integer orderNumber);
     OrderResponse removeProductsFromOrder(Integer orderNumber, OrderCompositionRequest source);
-    OrderResponse createOrder(OrderCompositionRequest source, String email);
+    OrderResponse createOrder(UUID idempotencyKey, OrderCompositionRequest source, String email);
 }
