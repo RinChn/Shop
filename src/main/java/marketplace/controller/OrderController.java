@@ -26,8 +26,9 @@ public class OrderController {
     private final EventServiceImpl eventService;
 
     @PostMapping
-    public OrderResponse createOrder(@Valid @RequestBody OrderCompositionRequest orderCompositionRequest) {
-        return orderService.createOrder(orderCompositionRequest, null);
+    public OrderResponse createOrder(@RequestHeader("Idempotency-Key") UUID idempotencyKey,
+                                     @Valid @RequestBody OrderCompositionRequest orderCompositionRequest) {
+        return orderService.createOrder(idempotencyKey, orderCompositionRequest, null);
     }
 
     @PostMapping("/{number}")
