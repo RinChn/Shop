@@ -33,7 +33,7 @@ public class Product {
     Category categories;
     @Column(name = "price", nullable = false)
     BigDecimal price;
-    @Column(name = "quantity", columnDefinition = "integer default 0")
+    @Column(name = "quantity")
     @Check(constraints = "quantity >= 0")
     @Builder.Default
     Integer quantity = 0;
