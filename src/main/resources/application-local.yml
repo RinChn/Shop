@@ -11,13 +11,33 @@ spring:
   h2:
     console:
       enabled: true
-scheduler:
-  enabled: true
-  period: PT30S
+  cache:
+    cache-names: "exchangeCache,userLoginCache"
+    caffeine:
+      spec: maximumSize=1,expireAfterWrite=1m
+  kafka:
+    bootstrap-servers: "${SPRING_KAFKA_BOOTSTRAP_SERVERS:localhost:9092}"
+    consumer:
+      group-id: event-group-double
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+  data:
+    redis:
+      host: "${SPRING_REDIS_HOST:localhost}"
+      port: 6379
 
+scheduler:
+  enabled: false
+  period: PT30S
 app:
   file-names:
     exchange-rate: "src/main/resources/parameters/ExchangeRate.json"
-  exchange:
+  currency:
     url: "${EXCHANGE_SERVICE_URL:http://localhost:8081}"
     url-get-currency: "/api/v2/exchange"
+  tax:
+    url: "${TAX_SERVICE_URL:http://localhost:8082}"
+    url-get-tin: "/api/v3/users"
+  redis:
+    host: "${SPRING_REDIS_HOST:localhost}"
