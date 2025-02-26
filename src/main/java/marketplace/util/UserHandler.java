@@ -18,7 +18,6 @@ public class UserHandler {
     private final HttpServletRequest request;
     private final UserRepository userRepository;
 
-    @Cacheable(value = "userLoginCache", key = "'email'")
     public User getCurrentUser() {
         log.info("getCurrentUser");
         User customer = (User) request.getSession().getAttribute("user");
@@ -27,9 +26,8 @@ public class UserHandler {
         return customer;
     }
 
-    @Cacheable(value = "userLoginCache", key = "#email")
     public User getUserByEmail(String email) {
-        log.info("getUserByEmail");
+        log.info("getUserByEmail {}", email);
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new ApplicationException(ErrorType.UNIDENTIFIED_USER));
     }
