@@ -1,7 +1,6 @@
 package marketplace.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
-import marketplace.controller.response.OrderResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.EnableCaching;
@@ -12,17 +11,14 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.cache.RedisCacheWriter;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
 @Configuration
 @EnableCaching
 public class CacheConfig {
@@ -31,28 +27,7 @@ public class CacheConfig {
     private String redisHost;
 
     @Bean
-    @Profile("local")
-    public CacheManager caffeineCacheManager() {
-        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
-        cacheManager.setCaffeine(Caffeine.newBuilder()
-                .expireAfterWrite(10, TimeUnit.MINUTES)
-                .maximumSize(1000));
-        return cacheManager;
-    }
-
-    @Bean
     @Profile("!local")
-    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
-        RedisCacheConfiguration cacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair
-                        .fromSerializer(new Jackson2JsonRedisSerializer<>(OrderResponse.class)));
-        return RedisCacheManager.builder(RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory))
-                .cacheDefaults(cacheConfiguration)
-                .build();
-    }
-
-
-    @Bean
     public RedisTemplate<UUID, UUID> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<UUID, UUID> template = new RedisTemplate<>();
         template.setConnectionFactory(connectionFactory);
@@ -62,6 +37,7 @@ public class CacheConfig {
     }
 
     @Bean
+    @Profile("!local")
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration();
         configuration.setHostName(redisHost);
@@ -69,4 +45,23 @@ public class CacheConfig {
         return new LettuceConnectionFactory(configuration);
     }
 
+    @Bean(name = "cacheManager")
+    @Profile("!local")
+    public CacheManager redisCacheManager(RedisConnectionFactory redisConnectionFactory) {
+        RedisCacheWriter cacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
+        RedisCacheManager.RedisCacheManagerBuilder builder = RedisCacheManager.builder(cacheWriter)
+                .cacheDefaults(RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(RedisSerializationContext.SerializationPair
+                        .fromSerializer(new GenericJackson2JsonRedisSerializer())));
+        return builder.build();
+    }
+
+    @Bean(name = "cacheManager")
+    @Profile("local")
+    public CacheManager caffeineCacheManager() {
+        CaffeineCacheManager cacheManager = new CaffeineCacheManager();
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .maximumSize(100)
+                .expireAfterWrite(10, java.util.concurrent.TimeUnit.MINUTES));
+        return cacheManager;
+    }
 }

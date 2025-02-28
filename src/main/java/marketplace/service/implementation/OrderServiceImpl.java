@@ -13,6 +13,8 @@ import marketplace.entity.*;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import marketplace.repository.OrderCompositionRepository;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.Cacheable;
 import marketplace.repository.OrderRepository;
 import marketplace.repository.ProductRepository;
@@ -20,13 +22,11 @@ import marketplace.service.OrderService;
 import marketplace.util.OrderStatus;
 import marketplace.util.UserHandler;
 import org.springframework.core.convert.ConversionService;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -44,33 +44,41 @@ public class OrderServiceImpl implements OrderService {
     private final OrderCompositionRepository orderCompositionRepository;
     private final ConversionService conversionService;
     private final UserHandler userHandler;
-    private final RedisTemplate<UUID, UUID> redisTemplate;
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional
     @Timer
-    @Cacheable(value = "ordersCache", key = "#idempotencyKey")
+    @Cacheable(value = "ordersCache", key = "#idempotencyKey", cacheManager = "cacheManager")
     public OrderResponse createOrder(UUID idempotencyKey, OrderCompositionRequest source, String email) {
 
-        UUID existingOrderId = redisTemplate.opsForValue().get(idempotencyKey);
-        log.info("Create Order Request");
+        Cache cache = cacheManager.getCache("ordersCache");
+        UUID existingOrderId = null;
+
+        if (cache != null) {
+            existingOrderId = cache.get(idempotencyKey, UUID.class);
+            log.info("Create Order Request");
+        }
+
         if (existingOrderId != null) {
             log.info("Order found in cache: {}", existingOrderId);
             return conversionService.convert(orderRepository.findById(existingOrderId).get(), OrderResponse.class);
         }
+
         User customer;
         if (email == null) {
             customer = userHandler.getCurrentUser();
         } else {
-            log.info("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! {}", email);
             customer = userHandler.getUserByEmail(email);
         }
+
         Product product = productService.bookProduct(source.getProductArticle(), source.getProductQuantity());
         BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(source.getProductQuantity()));
         Long lastNumber = orderRepository.getLastNumberOfUserOrders(customer);
         if (lastNumber == null) {
             lastNumber = 0L;
         }
+
         Order order = Order.builder()
                 .number(lastNumber.intValue() + 1)
                 .price(totalPrice)
@@ -78,12 +86,13 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderRepository.save(order);
         log.info("Order created {} for user {}", order.getNumber(), order.getCustomer().getEmail());
+
         OrderCompositionId orderCompositionId = OrderCompositionId.builder()
                 .orderId(order.getId())
                 .productId(product.getId())
                 .build();
-        OrderComposition orderComposition = OrderComposition
-                .builder()
+
+        OrderComposition orderComposition = OrderComposition.builder()
                 .id(orderCompositionId)
                 .order(order)
                 .product(product)
@@ -91,8 +100,13 @@ public class OrderServiceImpl implements OrderService {
                 .productQuantity(source.getProductQuantity())
                 .build();
         orderCompositionRepository.save(orderComposition);
+
         log.info("Order created {} for user {}", order.getNumber(), order.getCustomer().getEmail());
-        redisTemplate.opsForValue().set(idempotencyKey, order.getId(), Duration.ofMinutes(10));
+
+        if (cache != null) {
+            cache.put(idempotencyKey, order.getId());
+        }
+
         return conversionService.convert(order, OrderResponse.class);
     }
 

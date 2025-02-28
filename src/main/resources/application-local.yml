@@ -12,7 +12,7 @@ spring:
     console:
       enabled: true
   cache:
-    cache-names: "exchangeCache,userLoginCache"
+    cache-names: "exchangeCache,ordersCache"
     caffeine:
       spec: maximumSize=1,expireAfterWrite=1m
   kafka:
@@ -22,10 +22,7 @@ spring:
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-  data:
-    redis:
-      host: "${SPRING_REDIS_HOST:localhost}"
-      port: 6379
+
 
 scheduler:
   enabled: false
@@ -39,5 +36,3 @@ app:
   tax:
     url: "${TAX_SERVICE_URL:http://localhost:8082}"
     url-get-tin: "/api/v3/users"
-  redis:
-    host: "${SPRING_REDIS_HOST:localhost}"
