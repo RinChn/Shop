@@ -1,4 +1,4 @@
-package marketplace.converter;
+package marketplace.converter.user;
 
 import marketplace.dto.UserDto;
 import marketplace.entity.User;

@@ -3,6 +3,6 @@
 
 CREATE TABLE users
 (
-    id UUID NOT NULL PRIMARY KEY default gen_random_uuid(),
+    id UUID NOT NULL default gen_random_uuid() PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE
 )

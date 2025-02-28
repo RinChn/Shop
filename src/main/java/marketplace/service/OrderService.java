@@ -11,10 +11,10 @@ import java.util.UUID;
 
 public interface OrderService {
     OrderResponse addToOrder(Integer number, OrderCompositionRequest source);
-    OrderResponse setStatus(OrderRequestSetStatus request);
+    OrderResponse setStatus(OrderRequestSetStatus request, String email);
     UUID deleteOrder(Integer orderNumber);
     List<OrderAndDetailsDto> getAllOrdersOfUser();
     List<OrderCompositionResponse> getTheOrderDetails(Integer orderNumber);
     OrderResponse removeProductsFromOrder(Integer orderNumber, OrderCompositionRequest source);
-    OrderResponse createOrder(OrderCompositionRequest source);
+    OrderResponse createOrder(UUID idempotencyKey, OrderCompositionRequest source, String email);
 }

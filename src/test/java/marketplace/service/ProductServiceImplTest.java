@@ -4,6 +4,7 @@ import marketplace.controller.response.ProductResponse;
 import marketplace.entity.Product;
 import marketplace.exception.ApplicationException;
 import marketplace.repository.ProductRepository;
+import marketplace.service.implementation.ProductServiceImpl;
 import marketplace.util.TestProduct;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

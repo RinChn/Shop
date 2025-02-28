@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import marketplace.dto.UserAndOrdersDto;
 import marketplace.dto.UserDto;
-import marketplace.service.UserService;
-import marketplace.service.UserServiceImpl;
+import marketplace.service.implementation.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

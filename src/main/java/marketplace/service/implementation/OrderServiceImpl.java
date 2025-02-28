@@ -1,9 +1,7 @@
-package marketplace.service;
+package marketplace.service.implementation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import marketplace.aspect.ChangingOrder;
-import marketplace.aspect.ChangingOrderAspect;
 import marketplace.aspect.Timer;
 import marketplace.controller.request.OrderCompositionRequest;
 import marketplace.controller.request.OrderRequestSetStatus;
@@ -15,8 +13,12 @@ import marketplace.entity.*;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import marketplace.repository.OrderCompositionRepository;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import marketplace.repository.OrderRepository;
 import marketplace.repository.ProductRepository;
+import marketplace.service.OrderService;
 import marketplace.util.OrderStatus;
 import marketplace.util.UserHandler;
 import org.springframework.core.convert.ConversionService;
@@ -42,19 +44,41 @@ public class OrderServiceImpl implements OrderService {
     private final OrderCompositionRepository orderCompositionRepository;
     private final ConversionService conversionService;
     private final UserHandler userHandler;
-    private final ChangingOrderAspect changingOrderAspect;
+    private final CacheManager cacheManager;
 
     @Override
     @Transactional
     @Timer
-    public OrderResponse createOrder(OrderCompositionRequest source) {
-        User customer = userHandler.getCurrentUser();
+    @Cacheable(value = "ordersCache", key = "#idempotencyKey", cacheManager = "cacheManager")
+    public OrderResponse createOrder(UUID idempotencyKey, OrderCompositionRequest source, String email) {
+
+        Cache cache = cacheManager.getCache("ordersCache");
+        UUID existingOrderId = null;
+
+        if (cache != null) {
+            existingOrderId = cache.get(idempotencyKey, UUID.class);
+            log.info("Create Order Request");
+        }
+
+        if (existingOrderId != null) {
+            log.info("Order found in cache: {}", existingOrderId);
+            return conversionService.convert(orderRepository.findById(existingOrderId).get(), OrderResponse.class);
+        }
+
+        User customer;
+        if (email == null) {
+            customer = userHandler.getCurrentUser();
+        } else {
+            customer = userHandler.getUserByEmail(email);
+        }
+
         Product product = productService.bookProduct(source.getProductArticle(), source.getProductQuantity());
         BigDecimal totalPrice = product.getPrice().multiply(BigDecimal.valueOf(source.getProductQuantity()));
         Long lastNumber = orderRepository.getLastNumberOfUserOrders(customer);
         if (lastNumber == null) {
             lastNumber = 0L;
         }
+
         Order order = Order.builder()
                 .number(lastNumber.intValue() + 1)
                 .price(totalPrice)
@@ -62,12 +86,13 @@ public class OrderServiceImpl implements OrderService {
                 .build();
         orderRepository.save(order);
         log.info("Order created {} for user {}", order.getNumber(), order.getCustomer().getEmail());
+
         OrderCompositionId orderCompositionId = OrderCompositionId.builder()
                 .orderId(order.getId())
                 .productId(product.getId())
                 .build();
-        OrderComposition orderComposition = OrderComposition
-                .builder()
+
+        OrderComposition orderComposition = OrderComposition.builder()
                 .id(orderCompositionId)
                 .order(order)
                 .product(product)
@@ -75,16 +100,21 @@ public class OrderServiceImpl implements OrderService {
                 .productQuantity(source.getProductQuantity())
                 .build();
         orderCompositionRepository.save(orderComposition);
-        log.info("OrderComposition created: {}", orderComposition.getId());
+
+        log.info("Order created {} for user {}", order.getNumber(), order.getCustomer().getEmail());
+
+        if (cache != null) {
+            cache.put(idempotencyKey, order.getId());
+        }
+
         return conversionService.convert(order, OrderResponse.class);
     }
 
     @Override
     @Transactional
     @Timer
-    @ChangingOrder
     public OrderResponse addToOrder(Integer number, OrderCompositionRequest source) {
-        Order order = changingOrderAspect.getOrderFromContext();
+        Order order = checkOrderStatusToChangeComposition(number, userHandler.getCurrentUser());
         Integer quantity = source.getProductQuantity();
         Product product = productService.bookProduct(source.getProductArticle(), quantity);
 
@@ -127,9 +157,15 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Timer
     @Override
-    @ChangingOrder
-    public OrderResponse setStatus(OrderRequestSetStatus request) {
-        Order order = changingOrderAspect.getOrderFromContext();
+    public OrderResponse setStatus(OrderRequestSetStatus request, String email) {
+        User customer;
+        if (email == null) {
+            customer = userHandler.getCurrentUser();
+        } else {
+            customer = userHandler.getUserByEmail(email);
+        }
+        Order order = orderRepository.findOrderByNumber(request.getOrderNumber(), customer)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
         order.setStatus(request.getStatus());
         orderRepository.save(order);
 
@@ -205,9 +241,8 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Timer
     @Override
-    @ChangingOrder
     public OrderResponse removeProductsFromOrder(Integer orderNumber, OrderCompositionRequest source) {
-        Order order = changingOrderAspect.getOrderFromContext();
+        Order order = checkOrderStatusToChangeComposition(orderNumber, userHandler.getCurrentUser());
         Product product = productRepository.findByArticle(source.getProductArticle())
                 .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTENT_ARTICLE));
 
@@ -250,6 +285,17 @@ public class OrderServiceImpl implements OrderService {
         productRepository.save(product);
 
         return conversionService.convert(order, OrderResponse.class);
+    }
+
+    private Order checkOrderStatusToChangeComposition(Integer orderNumber, User user) {
+        Order order = orderRepository.findOrderByNumber(orderNumber, user)
+                .orElseThrow(() -> new ApplicationException(ErrorType.NONEXISTEN_ORDER));
+        log.info("Order with UUID {}", order.getId());
+        OrderStatus status = order.getStatus();
+        if (!status.equals(OrderStatus.CREATED)) {
+            throw new ApplicationException(ErrorType.SET_NOT_CREATED_ORDER);
+        }
+        return order;
     }
 
 }

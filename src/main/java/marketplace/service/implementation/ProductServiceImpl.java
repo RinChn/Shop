@@ -1,6 +1,5 @@
-package marketplace.service;
+package marketplace.service.implementation;
 
-import feign.FeignException;
 import marketplace.aspect.Timer;
 import marketplace.controller.response.OrderAndTinResponse;
 import marketplace.dto.SearchFilter;
@@ -14,11 +13,9 @@ import lombok.RequiredArgsConstructor;
 import marketplace.exception.ApplicationException;
 import marketplace.exception.ErrorType;
 import marketplace.exchange.ExchangeTaxHandler;
-import marketplace.exchange.TaxFeignClient;
 import marketplace.repository.OrderCompositionRepository;
+import marketplace.service.ProductService;
 import marketplace.util.FileHandler;
-import marketplace.util.UserHandler;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
